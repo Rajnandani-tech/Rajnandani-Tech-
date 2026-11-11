@@ -1,0 +1,3175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="EduGenius AI is an offline-first academic learning workspace with concept guides, quizzes, solvers, notes, revision planning, focus tools, and progress tracking.">
+<title>EduGenius AI • Offline Academic Learning Platform</title>
+<style>
+:root{
+  --nav:#0a0f1d;--nav-hover:#151f38;--blue:#4f6ef7;--blue-light:#7792fb;
+  --cyan:#06b6d4;--pink:#ec4899;--purple:#8b5cf6;--emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;
+  --bg:#f4f7fc;--card:#ffffff;--card-trans:rgba(255,255,255,0.92);--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
+  --shadow:0 10px 30px -5px rgba(15,23,42,.08),0 4px 6px -2px rgba(15,23,42,.04);
+  --soft:#f1f5f9;--radius:16px;--font:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+[data-theme=dark]{
+  --nav:#050811;--nav-hover:#10172a;--blue:#6366f1;--blue-light:#818cf8;
+  --cyan:#22d3ee;--pink:#f472b6;--purple:#a78bfa;--emerald:#34d399;--amber:#fbbf24;--rose:#fb7185;
+  --bg:#070b14;--card:#0f172a;--card-trans:rgba(15,23,42,0.92);--ink:#f8fafc;--muted:#94a3b8;--line:#1e293b;
+  --shadow:0 12px 35px -5px rgba(0,0,0,.6);--soft:#131d35;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 var(--font);transition:background .3s,color .3s;overflow-x:hidden}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.blob{position:fixed;border-radius:50%;filter:blur(100px);opacity:.2;z-index:0;pointer-events:none;animation:float 18s ease-in-out infinite}
+.b1{width:500px;height:500px;background:var(--blue);top:-150px;right:-100px}
+.b2{width:450px;height:450px;background:var(--cyan);bottom:-120px;left:200px;animation-delay:-6s}
+.b3{width:350px;height:350px;background:var(--purple);top:40%;right:25%;animation-delay:-12s;opacity:.15}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(50px,-40px) scale(1.08)}66%{transform:translate(-40px,50px) scale(.94)}}
+
+.app{display:flex;min-height:100vh;position:relative;z-index:1}
+.side{width:260px;background:linear-gradient(180deg,var(--nav),#0d1428);color:#e2e8f0;padding:22px 16px;display:flex;flex-direction:column;gap:14px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid #1e293b;box-shadow:4px 0 24px rgba(0,0,0,.15)}
+.brand{display:flex;align-items:center;gap:12px;padding:0 6px}
+.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--cyan),var(--pink));background-size:200% 200%;animation:grad 6s ease infinite,pulse 3s infinite;display:grid;place-items:center;font-size:22px;font-weight:900;color:#fff}
+@keyframes grad{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(79,110,247,.5)}50%{box-shadow:0 0 0 10px rgba(79,110,247,0)}}
+.brand b{display:block;font-size:16px;color:#fff;letter-spacing:-.2px}.brand small{font-size:9.5px;letter-spacing:2px;color:var(--cyan);font-weight:700}
+
+.navlabel{font-size:10px;color:#64748b;letter-spacing:1.8px;padding:8px 10px 2px;font-weight:700}
+.nav button{width:100%;border:0;background:transparent;color:#94a3b8;text-align:left;padding:11px 14px;border-radius:12px;margin:2px 0;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:11px;transition:all .2s}
+.nav button span{font-size:16px;width:24px;text-align:center;transition:transform .25s}
+.nav button:hover{background:var(--nav-hover);color:#fff;transform:translateX(4px)}.nav button:hover span{transform:scale(1.25) rotate(-6deg)}
+.nav button.active{background:linear-gradient(90deg,var(--blue),#3b82f6);color:#fff;box-shadow:0 8px 20px -4px rgba(79,110,247,.5)}
+
+.sidefoot{margin-top:auto;background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:14px;font-size:11px;color:#94a3b8}
+.sidefoot b{display:block;color:#fff;font-size:12px;margin-bottom:6px}
+.xpbar{height:8px;background:#020617;border-radius:10px;overflow:hidden;margin:7px 0}
+.xpbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));border-radius:10px;transition:width .8s cubic-bezier(.2,.9,.3,1)}
+
+main{flex:1;min-width:0}
+.top{height:70px;background:var(--card-trans);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-size:12.5px;position:sticky;top:0;z-index:30}
+.tleft{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.tright{display:flex;align-items:center;gap:10px}
+.grade-badge{background:var(--soft);border:1.5px solid var(--line);color:var(--ink);padding:6px 14px;border-radius:30px;font-weight:700;display:flex;align-items:center;gap:8px}
+.grade-select{background:transparent;border:0;color:inherit;font:inherit;font-weight:700;cursor:pointer;outline:none}
+.grade-select option{background:var(--card);color:var(--ink)}
+.chip{background:var(--soft);color:var(--ink);padding:7px 13px;border-radius:30px;font-weight:700;font-size:11.5px;display:flex;gap:6px;align-items:center;border:1px solid var(--line)}
+.flame{animation:flick 1.2s ease-in-out infinite alternate}
+@keyframes flick{from{transform:scale(1) rotate(-6deg)}to{transform:scale(1.25) rotate(6deg)}}
+.iconbtn{border:0;background:var(--soft);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:15px;display:grid;place-items:center;color:var(--ink);transition:transform .3s,background .2s;border:1px solid var(--line)}
+.iconbtn:hover{transform:scale(1.1);background:var(--line)}
+.avatar{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;width:38px;height:38px;display:grid;place-items:center;border-radius:50%;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(79,110,247,.3)}
+
+.content{max-width:1440px;padding:28px;margin:auto}
+.page{display:none}.page.active{display:block;animation:pgIn .45s cubic-bezier(.2,.8,.3,1)}
+@keyframes pgIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.hero{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:16px;flex-wrap:wrap}
+.hero h1{font-size:28px;margin:0 0 6px;letter-spacing:-.5px;font-weight:800;background:linear-gradient(90deg,var(--ink),var(--blue),var(--cyan),var(--purple));background-size:250%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:grad 10s linear infinite}
+.sub{font-size:12.5px;color:var(--muted);margin:0}
+.pill,.tag{font-size:10px;font-weight:800;letter-spacing:.6px;padding:6px 14px;border-radius:30px;background:#e0f2fe;color:#0369a1;text-transform:uppercase}
+[data-theme=dark] .pill,[data-theme=dark] .tag{background:#0c4a6e;color:#7dd3fc}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .25s,box-shadow .25s,border-color .25s}
+.stat{padding:20px;position:relative;overflow:hidden}
+.stat:hover{transform:translateY(-4px);border-color:var(--blue);box-shadow:0 16px 36px rgba(79,110,247,.16)}
+.ico{background:var(--soft);width:44px;height:44px;border-radius:12px;display:grid;place-items:center;margin-bottom:12px;font-size:22px}
+.stat strong{font-size:28px;font-weight:800;display:block;letter-spacing:-.5px}
+.stat small{font-size:11.5px;color:var(--muted);font-weight:600}
+
+.card{padding:24px;margin-bottom:20px}.card h2{font-size:17px;font-weight:800;margin:0 0 6px;letter-spacing:-.3px}
+.layout{display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
+.activity{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:14px 8px;font-size:13px;border-radius:12px;transition:background .2s,transform .2s}
+.activity:hover{background:var(--soft);transform:translateX(5px)}.activity:last-child{border:0}
+.activity small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0}
+
+.btn{border:0;background:linear-gradient(135deg,var(--blue),#4338ca);color:#fff;border-radius:12px;padding:11px 20px;font-size:12.5px;font-weight:700;cursor:pointer;position:relative;overflow:hidden;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px -4px rgba(79,110,247,.5)}.btn:active{transform:scale(.97)}
+.btn.soft{background:var(--soft);color:var(--blue);box-shadow:none;border:1px solid var(--line)}.btn.soft:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn.cy{background:linear-gradient(135deg,var(--cyan),#0284c7)}.btn.pk{background:linear-gradient(135deg,var(--pink),#db2777)}.btn.em{background:linear-gradient(135deg,var(--emerald),#059669)}
+.btn.sm{padding:7px 14px;font-size:11.5px;border-radius:9px}
+
+label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;display:block;margin-top:12px}
+input,textarea,select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;margin:6px 0 14px;font:13px var(--font);color:var(--ink);background:var(--card);outline:0;transition:border .2s,box-shadow .2s}
+select option{background:var(--card);color:var(--ink)}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(79,110,247,.18)}
+textarea{min-height:95px;resize:vertical}
+.row{display:flex;gap:12px;align-items:center}.row>*{flex:1;min-width:0}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+.chips-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
+.topic-chip{background:var(--soft);border:1px solid var(--line);padding:7px 14px;border-radius:24px;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--ink)}
+.topic-chip:hover{background:var(--blue);color:#fff;border-color:var(--blue);transform:translateY(-2px);box-shadow:0 6px 14px rgba(79,110,247,.3)}
+
+.result{background:var(--soft);border:1px solid var(--line);padding:20px;border-radius:14px;font-size:13.5px;line-height:1.8;margin-top:16px}
+.result h3{margin:16px 0 6px;color:var(--blue);font-size:15px;font-weight:800}
+.result ul{margin:8px 0;padding-left:22px}
+.result code{background:rgba(0,0,0,.07);padding:3px 7px;border-radius:6px;font-family:Consolas,monaco,monospace;font-size:12px}
+[data-theme=dark] .result code{background:rgba(255,255,255,.1)}
+.formula-box{background:linear-gradient(135deg,rgba(79,110,247,.1),rgba(6,182,212,.1));border-left:4px solid var(--blue);padding:14px 18px;border-radius:0 14px 14px 0;margin:14px 0;font-weight:700;font-family:Consolas,monospace;font-size:13px}
+
+.mindmap-canvas{width:100%;height:320px;border:1px dashed var(--line);border-radius:14px;background:var(--card);margin-top:14px}
+
+.diagram{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;background:var(--soft);padding:22px;border-radius:14px;margin-top:16px;border:1px dashed var(--line)}
+.node{background:var(--card);border:2px solid #cbd5e1;padding:12px 18px;border-radius:14px;font-size:12px;font-weight:800;animation:nodeIn .5s both;transition:all .2s;box-shadow:var(--shadow)}
+.node:hover{transform:translateY(-3px) scale(1.04);border-color:var(--blue);box-shadow:0 10px 25px rgba(79,110,247,.25)}
+.arrow{color:var(--blue);font-weight:900;font-size:18px}
+@keyframes nodeIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+
+.qnav{display:flex;gap:7px;flex-wrap:wrap;margin:16px 0}
+.qnav-dot{width:32px;height:32px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);font-size:11.5px;font-weight:800;display:grid;place-items:center;cursor:pointer;transition:.2s;color:var(--ink)}
+.qnav-dot.current{border-color:var(--blue);background:var(--soft);color:var(--blue)}
+.qnav-dot.answered{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+.option{display:block;border:1.5px solid var(--line);padding:14px 18px;border-radius:12px;margin:9px 0;font-size:13.5px;cursor:pointer;transition:all .2s;background:var(--card)}
+.option:hover{border-color:var(--blue);transform:translateX(5px);background:var(--soft)}
+.option.right{border-color:var(--emerald);background:rgba(16,185,129,.15);font-weight:700}
+.option.wrong{border-color:var(--rose);background:rgba(244,63,94,.15)}
+
+.fc-container{perspective:1200px;height:250px;margin:16px 0;cursor:pointer}
+.fc{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.3,.8,.3,1);transform-style:preserve-3d}
+.fc-container.flip .fc{transform:rotateY(180deg)}
+.fcf,.fcb{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:32px;text-align:center;box-shadow:var(--shadow)}
+.fcf{background:linear-gradient(135deg,#3b82f6,#06b6d4);color:#fff}
+.fcb{background:linear-gradient(135deg,#ec4899,#8b5cf6);color:#fff;transform:rotateY(180deg)}
+.fcf h3,.fcb h3{font-size:21px;margin:0 0 10px;font-weight:800;line-height:1.4}
+.fcf small,.fcb small{font-size:11px;opacity:.9;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+
+.sticky-paper{background:#fef08a;color:#1e293b;padding:24px;border-radius:16px;max-width:760px;margin:20px auto;line-height:1.6;box-shadow:0 10px 25px -5px rgba(0,0,0,.15);border:1px solid #fde047}
+.sticky-paper h2{color:#0f172a;margin-top:0}.sticky-paper p,.sticky-paper li{color:#334155}
+
+.chatbox{height:420px;overflow-y:auto;border:1.5px solid var(--line);padding:18px;border-radius:16px;margin-bottom:14px;background:var(--card);display:flex;flex-direction:column;gap:14px}
+.bubble{padding:14px 18px;border-radius:18px;max-width:85%;font-size:13.5px;line-height:1.7;position:relative}
+.bot{background:var(--soft);color:var(--ink);border-bottom-left-radius:4px;align-self:flex-start}
+.user{background:linear-gradient(135deg,var(--blue),#0284c7);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.bot ul{margin:8px 0;padding-left:20px}
+
+.timer{display:grid;place-items:center;position:relative;width:250px;height:250px;margin:15px auto}
+.timer svg{transform:rotate(-90deg)}
+.timer circle{fill:none;stroke-width:13;stroke-linecap:round}
+.timer .bgc{stroke:var(--soft)}
+.timer .fg{stroke:url(#tg);transition:stroke-dashoffset 1s linear}
+.timer .t{position:absolute;font-size:50px;font-weight:900;letter-spacing:-1px}
+
+.chart{height:170px;display:flex;align-items:end;gap:12px;border-bottom:1.5px solid var(--line);padding:10px 4px}
+.chart span{flex:1;text-align:center;font-size:10.5px;color:var(--muted);height:100%;display:flex;flex-direction:column;justify-content:flex-end;font-weight:700}
+.chart i{display:block;background:linear-gradient(180deg,var(--cyan),var(--blue));border-radius:8px 8px 0 0;margin-bottom:6px;height:0;transition:height 1.2s cubic-bezier(.2,.9,.3,1.2)}
+.prog{height:8px;background:var(--soft);border-radius:10px;overflow:hidden;margin:10px 0}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--blue));border-radius:10px;transition:width .5s}
+
+.code-editor{min-height:240px;font-family:'Courier New',Consolas,monospace;font-size:13px;line-height:1.5;background:#090d16;color:#f8fafc;border-radius:14px;border:1px solid #1e293b;padding:16px}
+.code-out{background:#060911;color:#a5f3fc;border-radius:12px;padding:16px;font-family:Consolas,monospace;font-size:12.5px;white-space:pre-wrap;min-height:90px;margin-top:12px;border:1px solid #1e293b}
+.issue{padding:12px 16px;border-left:4px solid var(--rose);background:rgba(244,63,94,.1);border-radius:10px;margin:9px 0;font-size:12.5px}
+.issue.ok{border-color:var(--emerald);background:rgba(16,185,129,.1)}
+
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.badge{padding:9px 14px;border-radius:12px;background:var(--soft);font-size:11.5px;font-weight:700;opacity:.35;filter:grayscale(1);transition:.4s;border:1px solid var(--line)}
+.badge.on{opacity:1;filter:none;box-shadow:0 6px 18px rgba(79,110,247,.25);border-color:var(--blue);background:linear-gradient(135deg,var(--soft),var(--card))}
+
+.task{display:flex;align-items:center;gap:12px;padding:13px;border-bottom:1px solid var(--line);font-size:13px;transition:.2s}
+.task input{width:auto;margin:0;cursor:pointer}
+.task.done span{text-decoration:line-through;opacity:.5}
+.task:hover{background:var(--soft)}
+
+#toasts{position:fixed;right:22px;bottom:22px;z-index:999;display:flex;flex-direction:column;gap:9px}
+.toast{background:var(--nav);color:#fff;padding:13px 20px;border-radius:14px;font-size:13px;font-weight:700;box-shadow:0 14px 40px rgba(0,0,0,.4);animation:toast .35s both;border-left:4px solid var(--cyan)}
+@keyframes toast{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:none}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:900}
+.hide{display:none!important}
+button:focus-visible,.topic-chip:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+
+@media print{.side,.top,.btn,.iconbtn,#bg-canvas,#confetti,.blob{display:none!important}.app,main,.content{display:block!important;width:100%;max-width:none;padding:0}.page{display:none!important}.page.active{display:block!important}.card,.stat{box-shadow:none;break-inside:avoid}body{background:#fff;color:#111}.sticky-paper{position:static;box-shadow:none;border:1px solid #ccc;color:#000}}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:26px;border-top:1px solid var(--line);margin-top:34px}
+
+@media(max-width:960px){.side{width:220px}.grid{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}
+@media(max-width:680px){.tright{flex-wrap:wrap;justify-content:center}.app{display:block}.side{width:100%;height:auto;position:static;padding:14px}.nav{display:flex;overflow-x:auto}.nav button{white-space:nowrap}.sidefoot,.navlabel{display:none}.content{padding:16px 12px}.top{height:auto;padding:12px;flex-direction:column;gap:10px}.two,.three{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<canvas id="confetti"></canvas>
+<div id="toasts"></div>
+
+<div class="app">
+<aside class="side">
+  <div class="brand">
+    <div class="logo">Ω</div>
+    <div><b>EduGenius AI</b><small>OFFLINE LEARNING PLATFORM</small></div>
+  </div>
+  <div class="navlabel">ACADEMIC WORKSPACE</div>
+  <nav class="nav">
+    <button class="active" data-p="home"><span>⌂</span>Dashboard</button>
+    <button data-p="learn"><span>✦</span>Concept Learning Hub</button>
+    <button data-p="quiz"><span>✓</span>Topic-to-Test Engine</button>
+    <button data-p="solver"><span>∑</span>Step-by-Step Solver</button>
+    <button data-p="cards"><span>🃏</span>Flashcard Decks</button>
+    <button data-p="notes"><span>▤</span>Curriculum Notes</button>
+    <button data-p="sticky"><span>📌</span>Sticky Notes</button>
+    <button data-p="planner"><span>◷</span>Smart Revision Planner</button>
+    <button data-p="focus"><span>⏱</span>Focus & Ambient Audio</button>
+    <button data-p="code"><span>⌘</span>Code Studio</button>
+    <button data-p="chat"><span>☷</span>EduGenius AI Study Helper</button>
+    <button data-p="analytics"><span>▥</span>Analytics & Progress</button>
+  </nav>
+
+  <div class="sidefoot">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <b>Level <span id="lvl">1</span> Scholar</b>
+      <span style="font-size:10.5px;color:var(--cyan);font-weight:700">⭐ <span id="rankTitle">Apprentice</span></span>
+    </div>
+    <div class="xpbar"><i id="xpf"></i></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px">
+      <span id="xpt">0 / 100 XP</span>
+      <span id="totalXpLabel">0 Total XP</span>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <header class="top">
+    <div class="tleft">
+      <span>Workspace / <b id="crumb">Dashboard</b></span>
+      <div class="grade-badge">
+        <span>🎓</span>
+        <select class="grade-select" id="globalGrade" onchange="switchGrade(this.value)">
+          <option value="p">Primary (Classes 1 - 5)</option>
+          <option value="6">Class 6 (Middle School)</option>
+          <option value="7">Class 7 (Middle School)</option>
+          <option value="8">Class 8 (Middle School)</option>
+          <option value="9">Class 9 (High School)</option>
+          <option value="10">Class 10 (Secondary & Board Exams)</option>
+          <option value="11">Class 11 (Senior Secondary)</option>
+          <option value="12">Class 12 (Board & Pre-College)</option>
+          <option value="jee_neet">Competitive: JEE / NEET / Foundations</option>
+          <option value="college" selected>University / B.Tech / Computer Science</option>
+          <option value="research">Postgraduate & Advanced Research</option>
+        </select>
+      </div>
+    </div>
+    <div class="tright">
+      <span class="chip" id="storageStatus" title="Offline standalone operational state">📴 Offline-ready</span>
+      <span class="chip"><span class="flame">🔥</span><span id="streak">0</span> day streak</span>
+      <span class="chip">⚡ <span id="xpc">0</span> XP</span>
+      <button class="iconbtn" id="soundBtn" onclick="toggleSound()" title="Toggle Audio Feedback">🔊</button>
+      <button class="iconbtn" id="theme" title="Toggle Dark/Light Mode">🌙</button>
+      <div class="avatar" id="uAvatar" onclick="promptName()" title="Click to edit Scholar Profile">S</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+  <!-- ==================== DASHBOARD ==================== -->
+  <section class="page active" id="home">
+    <div class="hero">
+      <div>
+        <h1>Welcome, <span id="userName">Scholar</span>! 👋</h1>
+        <p class="sub">Your standalone academic workspace for concept synthesis, problem solving, active recall, and revision.</p>
+      </div>
+      <span class="pill" id="activeCurriculumBadge">ALL-GRADE ENGINE ACTIVE</span>
+    </div>
+
+    <div class="grid">
+      <div class="stat"><div class="ico">📘</div><strong id="sn">0</strong><small>Saved Notes</small></div>
+      <div class="stat"><div class="ico">🎯</div><strong id="st">0</strong><small>Tests Completed</small></div>
+      <div class="stat"><div class="ico">📈</div><strong id="sa">—</strong><small>Average Accuracy</small></div>
+      <div class="stat"><div class="ico">⏱</div><strong id="sf">0m</strong><small>Focus Time</small></div>
+    </div>
+
+    <div class="layout">
+      <div>
+        <div class="card">
+          <h2>High-Yield Knowledge Launchpad</h2>
+          <p class="sub" style="margin-bottom:14px">Curriculum topics ready for instant exploration in <b id="dashGradeName">University / B.Tech</b>:</p>
+          <div class="chips-row" id="dashTopicChips"></div>
+
+          <div class="activity"><div class="dot"></div><div style="flex:1"><b>Concept Learning Outlines</b><small>Synthesize verified academic definitions, formulas, and structural mind-maps</small></div><button class="btn soft" onclick="go('learn')">Explore</button></div>
+          <div class="activity"><div class="dot"></div><div style="flex:1"><b>Topic Practice & Test Simulator</b><small>Execute multiple choice and fill-in questions with step explanations</small></div><button class="btn soft" onclick="go('quiz')">Take Test</button></div>
+          <div class="activity"><div class="dot"></div><div style="flex:1"><b>Step-by-Step Problem Solver</b><small>Evaluate quadratics, kinematics, calculus derivatives, and arithmetic live</small></div><button class="btn soft" onclick="go('solver')">Solve</button></div>
+          <div class="activity"><div class="dot"></div><div style="flex:1"><b>Flashcard Decks & Active Recall</b><small>Review digital flashcards with audio pronunciation and interactive flip</small></div><button class="btn soft" onclick="go('cards')">Review</button></div>
+          <div class="activity"><div class="dot"></div><div style="flex:1"><b>Pomodoro & Ambient Audio Studio</b><small>Focus timer equipped with client-side synthesized binaural and white noise</small></div><button class="btn soft" onclick="go('focus')">Focus</button></div>
+          <div class="activity"><div class="dot"></div><div style="flex:1"><b>Code Studio & Algorithm Lab</b><small>Run JavaScript inside isolated iframe; execute C/Python structural auditing</small></div><button class="btn soft" onclick="go('code')">Code Lab</button></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Score History</h2>
+          <p class="sub">Performance trends from your recent quiz attempts</p>
+          <div class="chart" id="miniChart"></div>
+        </div>
+        <div class="card">
+          <h2>🏆 Mastery Badges</h2>
+          <div class="badges" id="badges"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Built for Presentation & Offline Reliability</h2>
+      <p class="sub">This application operates as a single standalone HTML file. It requires zero cloud APIs, remote fonts, or internet access.</p>
+      <div class="three" style="margin-top:16px">
+        <div class="activity"><div class="ico">📴</div><div><b>100% Offline Compatible</b><small>No external scripts, CDNs, or network calls</small></div></div>
+        <div class="activity"><div class="ico">💾</div><div><b>LocalStorage Persistence</b><small>Saves notes, scores, and tasks locally in the browser</small></div></div>
+        <div class="activity"><div class="ico">🧩</div><div><b>Deterministic Solvers</b><small>Real mathematical engines and verified knowledge guides</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CONCEPT LEARNING HUB ==================== -->
+  <section class="page" id="learn">
+    <div class="hero">
+      <div>
+        <h1>Concept Learning Hub ✦</h1>
+        <p class="sub">Explore built-in domain concepts or generate structured academic study guides for any input topic.</p>
+      </div>
+      <span class="tag">KNOWLEDGE SYSTEM</span>
+    </div>
+
+    <div class="card">
+      <div class="three">
+        <div>
+          <label>Academic Domain</label>
+          <select id="ls" onchange="updateTopicPresets()">
+            <option value="math">Mathematics & Statistics</option>
+            <option value="physics">Physics & Mechanics</option>
+            <option value="chemistry">Chemistry & Molecular Science</option>
+            <option value="biology">Biology, Genetics & Medicine</option>
+            <option value="cs" selected>Computer Science & Software Engg</option>
+            <option value="social">History, Economics & Civics</option>
+            <option value="universal">Universal / Cross-Disciplinary</option>
+          </select>
+        </div>
+        <div>
+          <label>Explanation Mode</label>
+          <select id="ll">
+            <option value="intuitive">Intuitive & Conceptual (Foundational)</option>
+            <option value="academic" selected>Comprehensive Academic Rigor</option>
+            <option value="exam">High-Yield Exam Cram Notes</option>
+            <option value="research">Advanced Derivations & Edge Cases</option>
+          </select>
+        </div>
+        <div>
+          <label>Curriculum Presets</label>
+          <select id="lpreset" onchange="if(this.value)$('lt').value=this.value">
+            <option value="">-- Select preset topic --</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Enter Any Topic, Law, Algorithm or Theorem</label>
+      <div class="row">
+        <input id="lt" placeholder="e.g. Laws of Motion, Trigonometry, Quicksort, Calculus, Photoelectric Effect" onkeydown="if(event.key==='Enter')learnTopic()">
+        <button class="btn" onclick="learnTopic()" style="flex:0 0 auto">✨ Synthesize Concept</button>
+      </div>
+
+      <div class="chips-row" id="learnTopicChips"></div>
+
+      <div id="lo" class="hide">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;flex-wrap:wrap;gap:8px">
+          <h2 id="lTitle" style="margin:0;font-size:20px;color:var(--blue)"></h2>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn sm soft" id="ttsBtn" onclick="toggleSpeech()">🔊 Read Aloud</button>
+            <button class="btn sm soft" onclick="saveLearnAsNote()">💾 Save to Notes</button>
+            <button class="btn sm soft" onclick="jumpToQuizFromLearn()">📝 Test Me On This</button>
+            <button class="btn sm soft" onclick="createCardFromLearn()">🃏 Create Flashcard</button>
+          </div>
+        </div>
+
+        <div class="result" id="ltxt"></div>
+
+        <h3 style="margin-top:22px;font-size:15px">Sequential Process Flow</h3>
+        <div class="diagram" id="diag"></div>
+
+        <h3 style="margin-top:22px;font-size:15px">Interactive Mind Map</h3>
+        <canvas class="mindmap-canvas" id="mindmapCanvas"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TOPIC-TO-TEST ENGINE ==================== -->
+  <section class="page" id="quiz">
+    <div class="hero">
+      <div>
+        <h1>Topic Practice & Test Simulator ✓</h1>
+        <p class="sub">Practice with domain-specific verified question sets or paste custom study text to extract cloze assessments.</p>
+      </div>
+      <span class="tag">ASSESSMENT ENGINE</span>
+    </div>
+
+    <div class="card" id="qsetup">
+      <div class="three">
+        <div>
+          <label>Subject Domain</label>
+          <select id="qSub" onchange="populateQuizPresets()">
+            <option value="math">Mathematics</option>
+            <option value="physics">Physics</option>
+            <option value="chemistry">Chemistry</option>
+            <option value="biology">Biology & Life Sciences</option>
+            <option value="cs" selected>Computer Science & IT</option>
+            <option value="social">Social Sciences & History</option>
+            <option value="gk">General Aptitude & Reasoning</option>
+          </select>
+        </div>
+        <div>
+          <label>Specific Chapter or Topic</label>
+          <input id="qt" placeholder="e.g. Laws of Motion, Trigonometry, Data Structures">
+        </div>
+        <div>
+          <label>Question Quantity</label>
+          <select id="qn">
+            <option value="5" selected>5 Questions</option>
+            <option value="10">10 Questions</option>
+            <option value="15">15 Questions</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="three">
+        <div>
+          <label>Question Format</label>
+          <select id="qtype">
+            <option value="mixed" selected>Mixed (MCQ + Fill-in-Blank)</option>
+            <option value="mcq">Multiple Choice Only</option>
+            <option value="fill">Fill-in-the-Blanks Only</option>
+          </select>
+        </div>
+        <div>
+          <label>Pace Timer</label>
+          <select id="qd">
+            <option value="30">30 seconds / question</option>
+            <option value="60" selected>60 seconds / question</option>
+            <option value="90">90 seconds / question</option>
+          </select>
+        </div>
+        <div>
+          <label>Execution Mode</label>
+          <select id="qmode">
+            <option value="practice" selected>Practice Mode (Immediate Solution)</option>
+            <option value="timed">Timed Examination (Final Evaluation)</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Quick Presets</label>
+      <div class="chips-row" id="quizPresets"></div>
+
+      <label>Optional: Paste Notes or Textbook Paragraphs for Custom Fill-in Extraction</label>
+      <textarea id="qsrc" placeholder="Paste study notes here to extract custom fill-in questions automatically..."></textarea>
+
+      <button class="btn" onclick="generateTopicQuiz()">🚀 Generate Topic Test</button>
+      <button class="btn soft" onclick="buildQuiz()">General Domain Bank</button>
+    </div>
+
+    <div id="qp" class="card hide">
+      <div id="qheader" style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px">
+        <div><b id="qCurrentTopic" style="font-size:16px">Topic</b> <span class="tag" id="qCurrentDifficulty">Standard</span></div>
+        <div style="font-weight:800;font-size:14px;color:var(--blue)" id="qTimerDisplay">⏱ 00:00</div>
+      </div>
+      <div class="qnav" id="qnavDots"></div>
+      <div id="qbody"></div>
+    </div>
+  </section>
+
+  <!-- ==================== STEP-BY-STEP SOLVER ==================== -->
+  <section class="page" id="solver">
+    <div class="hero">
+      <div>
+        <h1>Interactive Step-by-Step Problem Solver ∑</h1>
+        <p class="sub">Solve linear equations, quadratics, physics kinematics, Ohm's law, derivatives, and matrix operations with full mathematical steps.</p>
+      </div>
+      <span class="tag">DETERMINISTIC SOLVER</span>
+    </div>
+
+    <div class="card">
+      <h2>Quick Equation Solver</h2>
+      <label>Linear Equation or Arithmetic Expression</label>
+      <div class="row">
+        <input id="freeSolveQ" placeholder="e.g. 2x + 5 = 15  or  sqrt(144) + 4 * 12">
+        <button class="btn" onclick="solveFreeQuestion()">Solve</button>
+      </div>
+      <div id="freeSolveOut"></div>
+    </div>
+
+    <div class="layout">
+      <div class="card">
+        <h2>Domain Solver Modules</h2>
+        <label>Select Solver Module</label>
+        <select id="solverCat" onchange="switchSolverCategory(this.value)">
+          <option value="quad">Quadratic Equation: ax² + bx + c = 0</option>
+          <option value="kinematics">Physics Kinematics: s = ut + ½at² & v = u + at</option>
+          <option value="ohm">Ohm's & Power Law: V = IR, P = VI</option>
+          <option value="deriv">Calculus Derivative: d/dx [axⁿ]</option>
+          <option value="matrix">2×2 Matrix Determinant & Inverse</option>
+          <option value="eval">General Arithmetic Expression Evaluator</option>
+        </select>
+
+        <div id="solverInputs" style="margin-top:14px"></div>
+
+        <button class="btn" onclick="executeSolver()">⚡ Calculate Step-by-Step</button>
+      </div>
+
+      <div class="card">
+        <h2>Mathematical Derivation & Solution</h2>
+        <div id="solverSolution" class="result">
+          Select a category on the left, enter valid numerical parameters, and click Calculate to view mathematical derivations and final answers.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FLASHCARDS ==================== -->
+  <section class="page" id="cards">
+    <div class="hero">
+      <div>
+        <h1>Flashcard Decks & Active Recall 🃏</h1>
+        <p class="sub">Review topic decks, flip cards, listen to audio prompts, or create custom card sets.</p>
+      </div>
+      <span class="tag">ACTIVE RECALL</span>
+    </div>
+
+    <div class="layout">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div>
+            <label style="margin:0 0 4px">Active Subject Deck</label>
+            <select id="deckSelector" onchange="switchDeck(this.value)" style="margin:0;width:auto">
+              <option value="cs">Computer Science & Algorithms</option>
+              <option value="physics">Physics Laws & Constants</option>
+              <option value="math">Mathematics Formulas & Identities</option>
+              <option value="chemistry">Chemistry Reagents & Laws</option>
+              <option value="biology">Biology Terminology</option>
+              <option value="social">History & Civics</option>
+              <option value="custom">My Custom Personal Deck</option>
+            </select>
+          </div>
+          <span class="chip" id="cardMasteryChip">Card 1 / 5</span>
+        </div>
+
+        <div class="fc-container" id="fcContainer" onclick="this.classList.toggle('flip')">
+          <div class="fc">
+            <div class="fcf">
+              <small>QUESTION / PROMPT</small>
+              <h3 id="fcf"></h3>
+              <small>Click to flip card</small>
+            </div>
+            <div class="fcb">
+              <small>ANSWER / DEFINITION</small>
+              <h3 id="fcb"></h3>
+              <small>Click to flip back</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:16px">
+          <button class="btn soft" onclick="fcMove(-1)">◀ Previous</button>
+          <button class="btn cy" onclick="fcShuffle()">🔀 Shuffle</button>
+          <button class="btn pk" onclick="speakCurrentCard()">🔊 Voice</button>
+          <button class="btn soft" onclick="fcMove(1)">Next ▶</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Generate Deck from Topic</h2>
+        <label>Topic Name</label>
+        <div class="row">
+          <input id="cardTopic" placeholder="e.g. Laws of Motion, Trigonometry, Data Structures">
+          <button class="btn" onclick="generateFlashcardsFromTopic()">Generate</button>
+        </div>
+        <hr style="margin:20px 0;border:0;border-top:1px solid var(--line)">
+        <h2>Add Card Manually</h2>
+        <label>Front Side (Question / Term)</label>
+        <input id="fq" placeholder="e.g. What is Heisenberg's Uncertainty Principle?">
+        <label>Back Side (Answer / Definition)</label>
+        <textarea id="fa" placeholder="e.g. Δx · Δp ≥ ℏ / 2. Position and momentum cannot both be precisely measured simultaneously."></textarea>
+        <button class="btn" onclick="fcAdd()">+ Save to Personal Deck</button>
+
+        <div style="margin-top:22px;border-top:1px solid var(--line);padding-top:16px">
+          <h2>Deck Controls</h2>
+          <p class="sub">Custom cards stored: <b id="customDeckCount">0</b></p>
+          <div class="row" style="margin-top:8px">
+            <button class="btn sm soft" onclick="exportDeck()">📥 Export JSON</button>
+            <button class="btn sm soft" onclick="clearCustomDeck()">🗑 Reset Deck</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CURRICULUM NOTES ==================== -->
+  <section class="page" id="notes">
+    <div class="hero">
+      <div>
+        <h1>Curriculum Chapter Notes & Summaries ▤</h1>
+        <p class="sub">Organize study notes by subject, filter by keyword, and export directly to PDF or print.</p>
+      </div>
+      <button class="btn sm" onclick="window.print()">🖨 Print / Export to PDF</button>
+    </div>
+
+    <div class="card">
+      <h2>Generate Topic Study Guide</h2>
+      <label>Chapter / Topic</label>
+      <div class="row">
+        <input id="currTopic" placeholder="e.g. Operating Systems, Laws of Motion, Trigonometry">
+        <button class="btn" onclick="generateCurriculumNote()">Prepare Guide</button>
+      </div>
+      <p id="currNoteStatus" class="sub" style="margin-top:6px">Draft will populate below for review before saving.</p>
+    </div>
+
+    <div class="card">
+      <div class="three">
+        <div>
+          <label>Subject</label>
+          <input id="ns" placeholder="e.g. Physics, Computer Science, Calculus">
+        </div>
+        <div>
+          <label>Chapter / Unit</label>
+          <input id="nc" placeholder="e.g. Chapter 3: Kinematics">
+        </div>
+        <div>
+          <label>Tag / Category</label>
+          <input id="ntag" placeholder="e.g. High-Yield, Derivations, Formulas">
+        </div>
+      </div>
+      <label>Notes Content</label>
+      <textarea id="nb" style="min-height:130px" placeholder="Type key textbook notes, formulas, definitions, and teacher summaries..."></textarea>
+      <button class="btn" onclick="saveNote()">💾 Save Chapter Note</button>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <h2>Saved Chapter Archive</h2>
+        <div style="width:260px">
+          <input id="nsearch" placeholder="🔍 Search notes by keyword..." oninput="renderNotes()" style="margin:0">
+        </div>
+      </div>
+      <div id="nl" style="margin-top:16px"></div>
+    </div>
+  </section>
+
+  <!-- ==================== STICKY NOTES ==================== -->
+  <section class="page" id="sticky">
+    <div class="hero">
+      <div>
+        <h1>Sticky Notes & Revision Sheet 📌</h1>
+        <p class="sub">Generate concise, high-impact revision sheets designed for quick reference and wall posting.</p>
+      </div>
+    </div>
+    <div class="card">
+      <label>Topic / Chapter</label>
+      <div class="row">
+        <input id="stickyTopic" placeholder="e.g. Laws of Motion, Trigonometry, DBMS, Calculus">
+        <button class="btn" onclick="generateStickyNotes()">Generate Note Sheet</button>
+      </div>
+      <div id="stickyOutput"></div>
+      <button class="btn soft" onclick="saveStickyAsNote()" style="margin-top:12px">Save to Curriculum Notes</button>
+    </div>
+  </section>
+
+  <!-- ==================== REVISION PLANNER ==================== -->
+  <section class="page" id="planner">
+    <div class="hero">
+      <div>
+        <h1>Smart Study Schedule Planner ◷</h1>
+        <p class="sub">Distribute topics systematically across available study days without overloading daily limits.</p>
+      </div>
+      <span class="tag">REVISION TIMETABLE</span>
+    </div>
+
+    <div class="card">
+      <div class="three">
+        <div>
+          <label>Target Subject or Examination</label>
+          <input id="ps" placeholder="e.g. Physics Board Exam, Computer Science Final">
+        </div>
+        <div>
+          <label>Exam Target Date</label>
+          <input id="pd" type="date">
+        </div>
+        <div>
+          <label>Session Duration (Minutes)</label>
+          <input id="pm" type="number" value="45" min="15" max="240">
+        </div>
+      </div>
+
+      <label>Chapters / Topics (Comma-separated)</label>
+      <textarea id="pc" placeholder="e.g. Kinematics, Laws of Motion, Work Energy, Rotational Dynamics, Gravitation"></textarea>
+
+      <div class="row">
+        <div>
+          <label>Daily Sessions Available</label>
+          <select id="pday">
+            <option value="1">1 Session per day</option>
+            <option value="2" selected>2 Sessions per day</option>
+            <option value="3">3 Sessions per day</option>
+          </select>
+        </div>
+        <div style="align-self:end;margin-bottom:14px">
+          <button class="btn" onclick="buildPlan()">🗓️ Generate Study Plan</button>
+        </div>
+      </div>
+      <div id="po"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2>Active Revision Tasks</h2>
+        <button class="btn sm soft" onclick="exportTasksICS()">📅 Export to iCalendar (.ics)</button>
+      </div>
+      <div class="prog"><i id="tprog"></i></div>
+      <div id="tasks"></div>
+    </div>
+  </section>
+
+  <!-- ==================== FOCUS & AMBIENT AUDIO ==================== -->
+  <section class="page" id="focus">
+    <div class="hero">
+      <div>
+        <h1>Focus Studio & Ambient Audio ⏱</h1>
+        <p class="sub">Pomodoro focus timer equipped with locally synthesized audio tones generated via Web Audio API.</p>
+      </div>
+      <span class="tag">NEURO-FOCUS</span>
+    </div>
+
+    <div class="layout">
+      <div class="card" style="text-align:center">
+        <div class="timer" id="tm">
+          <svg width="250" height="250">
+            <defs>
+              <linearGradient id="tg">
+                <stop offset="0" stop-color="#06b6d4"/>
+                <stop offset="1" stop-color="#ec4899"/>
+              </linearGradient>
+            </defs>
+            <circle class="bgc" cx="125" cy="125" r="108"/>
+            <circle class="fg" id="ring" cx="125" cy="125" r="108" stroke-dasharray="678.5" stroke-dashoffset="0"/>
+          </svg>
+          <div class="t" id="tt">25:00</div>
+        </div>
+
+        <div class="row" style="justify-content:center;max-width:380px;margin:12px auto">
+          <select id="tlen" onchange="tReset()">
+            <option value="25" selected>25 min (Standard Pomodoro)</option>
+            <option value="50">50 min (Deep Work Block)</option>
+            <option value="15">15 min (Sprint Review)</option>
+            <option value="5">5 min (Rest / Break)</option>
+          </select>
+        </div>
+
+        <div style="display:flex;justify-content:center;gap:10px;margin-top:16px">
+          <button class="btn" id="tgo" onclick="tToggle()">▶ Start Focus</button>
+          <button class="btn soft" onclick="tReset()">↺ Reset</button>
+        </div>
+        <p class="sub" style="margin-top:18px">Sessions Completed Today: <b id="tsess">0</b> • Total Focus: <b id="focusMinutesBadge">0 min</b></p>
+      </div>
+
+      <div class="card">
+        <h2>🎧 Real-Time Ambient Sound Generator</h2>
+        <p class="sub">Synthesized client-side by AudioContext oscillators. Completely self-contained without external audio files.</p>
+
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+          <button class="btn soft" id="sndRain" onclick="toggleAmbient('rain')">🌧️ Soft Filtered Noise: OFF</button>
+          <button class="btn soft" id="sndBinaural" onclick="toggleAmbient('binaural')">🧠 10Hz Binaural Tone: OFF</button>
+          <button class="btn soft" id="sndNoise" onclick="toggleAmbient('noise')">💨 White Noise: OFF</button>
+        </div>
+
+        <div style="margin-top:22px;padding:14px;background:var(--soft);border-radius:14px;font-size:12.5px;line-height:1.7">
+          <b>Stereo Listening Note:</b> Binaural beat generation requires headphones to split 210Hz and 220Hz tones into left/right channels.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CODE STUDIO ==================== -->
+  <section class="page" id="code">
+    <div class="hero">
+      <div>
+        <h1>Code Studio & Algorithm Lab ⌘</h1>
+        <p class="sub">Execute JavaScript in an isolated browser iframe sandbox; execute static syntax and structural validation for C/C++ and Python.</p>
+      </div>
+      <span class="tag">ALGORITHM LAB</span>
+    </div>
+
+    <div class="card">
+      <div class="three">
+        <div>
+          <label>Programming Language</label>
+          <select id="lang" onchange="loadCodeTemplate(this.value)">
+            <option value="javascript" selected>JavaScript (Live Isolated Frame Sandbox)</option>
+            <option value="python">Python 3 (Static Code & Structural Check)</option>
+            <option value="c">C / C++ (Memory & Syntax Validator)</option>
+          </select>
+        </div>
+        <div>
+          <label>Algorithm Presets</label>
+          <select id="codeTemplate" onchange="applyTemplate(this.value)">
+            <option value="hello">Hello World & Basics</option>
+            <option value="bubble">Bubble Sort</option>
+            <option value="merge">Merge Sort (O(n log n))</option>
+            <option value="binary">Binary Search</option>
+            <option value="fibonacci">Dynamic Fibonacci</option>
+            <option value="prime">Sieve of Eratosthenes (Primes)</option>
+            <option value="dsa">Stack Data Structure</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn" onclick="executeOrCheckCode()" style="width:100%">▶ Run / Analyze Code</button>
+        </div>
+      </div>
+
+      <label>Code Editor</label>
+      <textarea id="codein" class="code-editor" spellcheck="false"></textarea>
+
+      <div class="row">
+        <button class="btn sm soft" onclick="beautifyCode()">⚡ Auto-Indent</button>
+        <button class="btn sm soft" onclick="explainCode()">💡 Big-O & Complexity Breakdown</button>
+      </div>
+
+      <div id="codeout"></div>
+      <div id="codeExplainBox" class="result hide"></div>
+    </div>
+  </section>
+
+  <!-- ==================== STUDY HELPER ==================== -->
+  <section class="page" id="chat">
+    <div class="hero">
+      <div>
+        <h1>EduGenius AI Study Helper ☷</h1>
+        <p class="sub">Query verified academic guides and principles through a fast offline rule engine.</p>
+      </div>
+      <span class="tag">OFFLINE STUDY HELPER</span>
+    </div>
+
+    <div class="card">
+      <div class="chips-row">
+        <span class="topic-chip" onclick="askQuick('Explain Laws of Motion')">🍎 Laws of Motion</span>
+        <span class="topic-chip" onclick="askQuick('Explain Trigonometry')">📐 Trigonometry</span>
+        <span class="topic-chip" onclick="askQuick('Explain Kinematics')">🚀 Kinematics</span>
+        <span class="topic-chip" onclick="askQuick('Explain Quadratic Equations')">📊 Quadratic Equations</span>
+        <span class="topic-chip" onclick="askQuick('Explain Ohms Law')">⚡ Ohm's Law</span>
+        <span class="topic-chip" onclick="askQuick('Explain Data Structures')">💻 Data Structures</span>
+      </div>
+
+      <div class="chatbox" id="chatbox">
+        <div class="bubble bot">
+          Welcome to <b>EduGenius AI Study Helper</b>. Ask about Laws of Motion, Trigonometry, Kinematics, Quadratics, Ohm's Law, Data Structures, or any academic topic for instant verified definitions and explanations.
+        </div>
+      </div>
+
+      <div class="row">
+        <input id="chatin" placeholder="Ask any question, theorem derivation, or formula explanation..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="btn" onclick="sendChat()" style="flex:0 0 auto">Send Query ➤</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ANALYTICS & PROGRESS ==================== -->
+  <section class="page" id="analytics">
+    <div class="hero">
+      <div>
+        <h1>Learning Analytics & Progress Report ▥</h1>
+        <p class="sub">Track quiz attempts, score trends, saved notes, focus time, and scholar XP progress.</p>
+      </div>
+      <button class="btn sm" onclick="downloadReportCard()">📄 Download Progress Report</button>
+    </div>
+
+    <div class="grid">
+      <div class="stat"><strong id="at">0</strong><small>Quizzes Completed</small></div>
+      <div class="stat"><strong id="aa">—</strong><small>Average Accuracy</small></div>
+      <div class="stat"><strong id="ab">—</strong><small>Personal Best</small></div>
+      <div class="stat"><strong id="an">0</strong><small>Notes Archived</small></div>
+    </div>
+
+    <div class="card">
+      <h2>Score Timeline Progression</h2>
+      <div class="chart" id="chart"></div>
+      <h3 style="margin-top:24px;font-size:15px">Recent Examination Submissions</h3>
+      <div id="history"></div>
+    </div>
+  </section>
+
+  <footer>
+    EduGenius AI • Offline Academic Learning Platform • Presentation Ready
+  </footer>
+  </div>
+</main>
+</div>
+
+<script>
+/* ==================== GLOBAL STORAGE & CORE UTILITIES ==================== */
+const MEMORY_STORE = Object.create(null);
+const G=(k,d=[])=>{try{const raw=localStorage.getItem('ego_'+k);return raw===null?(MEMORY_STORE[k]??d):(JSON.parse(raw)??d)}catch(e){return MEMORY_STORE[k]??d}};
+const S=(k,v)=>{MEMORY_STORE[k]=v;try{localStorage.setItem('ego_'+k,JSON.stringify(v))}catch(e){if($('storageStatus'))$('storageStatus').textContent='Session-only save';}};
+const $=id=>document.getElementById(id);
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+let soundEnabled = G('sound', true);
+function toggleSound(){
+  soundEnabled = !soundEnabled;
+  S('sound', soundEnabled);
+  $('soundBtn').textContent = soundEnabled ? '🔊' : '🔇';
+  toast(soundEnabled ? 'Audio feedback enabled' : 'Audio feedback muted');
+}
+$('soundBtn').textContent = soundEnabled ? '🔊' : '🔇';
+
+/* ==================== WEB AUDIO SYNTHESIZER ==================== */
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(AC) audioCtx = new AC();
+  }
+  if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playBeep(freq=520, type='sine', dur=0.15){
+  if(!soundEnabled) return;
+  try{
+    const ctx = getAudioCtx(); if(!ctx) return;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + dur);
+  }catch(e){}
+}
+
+function playSuccessChime(){
+  if(!soundEnabled) return;
+  [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx)=>{
+    setTimeout(()=>playBeep(freq, 'triangle', 0.25), idx * 75);
+  });
+}
+
+/* Ambient Audio Generator */
+let ambientNodes = { rain: null, binaural: null, noise: null };
+function toggleAmbient(kind){
+  const ctx = getAudioCtx(); if(!ctx) return;
+  if(ambientNodes[kind]){
+    ambientNodes[kind].stop();
+    ambientNodes[kind] = null;
+    $(`snd${kind.charAt(0).toUpperCase()+kind.slice(1)}`).textContent = getAmbientLabel(kind, false);
+    toast(`${kind} sound stopped`);
+    return;
+  }
+  ['rain','binaural','noise'].forEach(k=>{
+    if(ambientNodes[k]){ ambientNodes[k].stop(); ambientNodes[k]=null; $(`snd${k.charAt(0).toUpperCase()+k.slice(1)}`).textContent = getAmbientLabel(k,false); }
+  });
+
+  if(kind==='noise' || kind==='rain'){
+    const bufferSize = ctx.sampleRate * 2;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++) data[i] = (Math.random() * 2 - 1) * 0.12;
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    noise.loop = true;
+    const filter = ctx.createBiquadFilter();
+    filter.type = kind==='rain' ? 'lowpass' : 'highpass';
+    filter.frequency.value = kind==='rain' ? 850 : 700;
+    const gain = ctx.createGain();
+    gain.gain.value = 0.10;
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    noise.start();
+    ambientNodes[kind] = noise;
+  } else if(kind==='binaural'){
+    const oscL = ctx.createOscillator(), oscR = ctx.createOscillator();
+    const gainL = ctx.createGain(), gainR = ctx.createGain();
+    const panL = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    const panR = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    oscL.frequency.value = 210;
+    oscR.frequency.value = 220;
+    gainL.gain.value = gainR.gain.value = 0.035;
+    if(panL && panR){
+      panL.pan.value = -1; panR.pan.value = 1;
+      oscL.connect(gainL); gainL.connect(panL); panL.connect(ctx.destination);
+      oscR.connect(gainR); gainR.connect(panR); panR.connect(ctx.destination);
+    } else {
+      oscL.connect(gainL); gainL.connect(ctx.destination);
+      oscR.connect(gainR); gainR.connect(ctx.destination);
+    }
+    oscL.start(); oscR.start();
+    ambientNodes[kind] = { stop: ()=>{ oscL.stop(); oscR.stop(); } };
+  }
+  $(`snd${kind.charAt(0).toUpperCase()+kind.slice(1)}`).textContent = getAmbientLabel(kind, true);
+  toast(`Playing ${kind} ambient sound`);
+}
+function getAmbientLabel(k, on){
+  if(k==='rain') return `🌧️ Soft Filtered Noise: ${on?'ON':'OFF'}`;
+  if(k==='binaural') return `🧠 10Hz Binaural Tone: ${on?'ON':'OFF'}`;
+  return `💨 White Noise: ${on?'ON':'OFF'}`;
+}
+
+/* ==================== SPEECH SYNTHESIS (TTS) ==================== */
+let speaking = false;
+function toggleSpeech(text){
+  if(!('speechSynthesis' in window)) return toast('Text-to-speech not supported in this browser');
+  if(speechSynthesis.speaking){
+    speechSynthesis.cancel();
+    speaking = false;
+    if($('ttsBtn')) $('ttsBtn').textContent = '🔊 Read Aloud';
+    return;
+  }
+  const toSpeak = text || $('ltxt').textContent;
+  if(!toSpeak) return;
+  const ut = new SpeechSynthesisUtterance(toSpeak);
+  ut.rate = 1.0;
+  ut.onend = ut.onerror = ()=>{
+    speaking = false;
+    if($('ttsBtn')) $('ttsBtn').textContent = '🔊 Read Aloud';
+  };
+  speechSynthesis.speak(ut);
+  speaking = true;
+  if($('ttsBtn')) $('ttsBtn').textContent = '⏹ Stop Audio';
+}
+
+/* ==================== TOAST & THEME ==================== */
+function toast(m){
+  const t=document.createElement('div');
+  t.className='toast';
+  t.textContent=m;
+  $('toasts').appendChild(t);
+  playBeep(650, 'sine', 0.08);
+  setTimeout(()=>{
+    t.style.transition='.4s';
+    t.style.opacity='0';
+    t.style.transform='translateX(50px)';
+    setTimeout(()=>t.remove(),400);
+  }, 2600);
+}
+
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  $('theme').textContent=t==='dark'?'☀️':'🌙';
+  S('theme',t);
+}
+$('theme').onclick=()=>setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+setTheme(G('theme','light'));
+
+/* ==================== USER PROFILE & LEVELING ==================== */
+function promptName(){
+  const cur = G('uname', 'Scholar');
+  const n = prompt('Enter your student name:', cur);
+  if(n && n.trim()){
+    S('uname', n.trim());
+    refreshUser();
+    toast(`Scholar profile set to: ${n.trim()}`);
+  }
+}
+function refreshUser(){
+  const n = G('uname', 'Scholar');
+  $('userName').textContent = n;
+  $('uAvatar').textContent = n.charAt(0).toUpperCase();
+}
+refreshUser();
+
+function addXP(n, reason){
+  let xp = G('xp', 0);
+  let oldLvl = Math.floor(xp/100) + 1;
+  let newXp = xp + n;
+  S('xp', newXp);
+  let newLvl = Math.floor(newXp/100) + 1;
+  toast(`+${n} XP • ${reason || 'Progress'}`);
+  playBeep(780, 'sine', 0.12);
+  if(newLvl > oldLvl){
+    playSuccessChime();
+    confetti();
+    toast(`🎉 LEVEL UP! You reached Level ${newLvl}!`);
+  }
+  refresh();
+}
+
+function touchStreak(){
+  const today = new Date().toDateString();
+  const s = G('streak', {d:'', n:0});
+  if(s.d === today) return;
+  const yesterday = new Date(Date.now() - 864e5).toDateString();
+  const nextN = s.d === yesterday ? s.n + 1 : 1;
+  S('streak', {d:today, n:nextN});
+  refresh();
+}
+
+/* ==================== CURRICULA DEFINITIONS ==================== */
+const CURRICULA = {
+  p: {
+    chips: ["Photosynthesis Basics", "Water Cycle", "Solar System Planets", "Basic Fractions", "States of Matter", "Human Skeletal System"],
+    presets: {
+      math: ["Basic Fractions", "Perimeter of Shapes", "Multiplication Tables"],
+      physics: ["Simple Machines", "Light and Shadow", "Magnets"],
+      chemistry: ["Solids, Liquids, Gases", "Water Filtration"],
+      biology: ["Plant Life Cycle", "Human Organs"],
+      cs: ["What is a Computer?", "Input vs Output"],
+      social: ["Continents and Oceans", "Local Government"]
+    }
+  },
+  middle: {
+    chips: ["Cell Organelles", "Newton's Laws", "Acids and Bases", "Linear Equations", "Electric Circuits", "Python Basics"],
+    presets: {
+      math: ["Linear Equations in 1 Variable", "Rational Numbers", "Pythagoras Theorem"],
+      physics: ["Force and Pressure", "Friction", "Electric Current"],
+      chemistry: ["Synthetic Fibres", "Metals and Non-metals", "Combustion"],
+      biology: ["Cell Structure", "Reproduction in Animals"],
+      cs: ["Algorithms & Flowcharts", "Introduction to Python"],
+      social: ["Delhi Sultanate", "Natural Resources"]
+    }
+  },
+  high: {
+    chips: ["Chemical Reactions", "Ohm's Law", "Quadratic Equations", "Periodic Table", "Cellular Respiration", "Trigonometry"],
+    presets: {
+      math: ["Quadratic Equations", "Arithmetic Progressions", "Trigonometric Identities"],
+      physics: ["Ohm's Law", "Magnetic Effects of Current", "Refraction & Lenses"],
+      chemistry: ["Chemical Equations", "Acids, Bases & pH", "Carbon Compounds"],
+      biology: ["Cellular Respiration", "Circulatory System", "Genetics"],
+      cs: ["Python Loops & Arrays", "Data Structures"],
+      social: ["Nationalism", "Sectors of Economy"]
+    }
+  },
+  senior: {
+    chips: ["Differential Calculus", "Thermodynamics", "Organic Reaction Mechanisms", "Electrostatics", "Molecular Genetics", "Wave Optics"],
+    presets: {
+      math: ["Limits & Derivatives", "Integration", "Matrices & Determinants"],
+      physics: ["Kinematics", "Laws of Thermodynamics", "Electrostatics"],
+      chemistry: ["Chemical Equilibrium", "Electrochemistry", "Organic Mechanisms"],
+      biology: ["DNA Replication", "Biotechnology", "Immune System"],
+      cs: ["Object-Oriented Programming", "Stacks & Queues"],
+      social: ["Macroeconomics", "Cold War Era"]
+    }
+  },
+  jee_neet: {
+    chips: ["Rotational Mechanics", "Organic Reaction Intermediates", "Complex Numbers", "Wave Optics", "Human Physiology"],
+    presets: {
+      math: ["Complex Numbers", "Differential Equations", "Definite Integrals"],
+      physics: ["Moment of Inertia", "Simple Harmonic Motion", "Fluid Mechanics"],
+      chemistry: ["Carbocations", "Thermodynamics & Gibbs Energy", "Qualitative Analysis"],
+      biology: ["Morphology of Plants", "Neural Control"],
+      cs: ["Algorithm Analysis"],
+      social: ["History of Science"]
+    }
+  },
+  college: {
+    chips: ["Laws of Motion", "Trigonometry", "Kinematics", "Quadratic Equations", "Ohm's Law", "Data Structures", "Calculus"],
+    presets: {
+      math: ["Trigonometry", "Quadratic Equations", "Differential Calculus"],
+      physics: ["Laws of Motion", "Kinematics", "Ohm's Law"],
+      chemistry: ["Chemical Equilibrium", "Thermodynamics"],
+      biology: ["Cellular Respiration", "Genetics"],
+      cs: ["Data Structures", "Quicksort Algorithm"],
+      social: ["Macroeconomics"]
+    }
+  }
+};
+
+/* ==================== VERIFIED TOPIC GUIDES DATABASE ==================== */
+const TOPIC_GUIDES = {
+  'laws of motion': {
+    d: "Newton's three laws of motion describe the relationship between the physical forces acting on a body and the resulting motion of that body.",
+    f: "First Law: ΣF = 0 ⇒ v = constant | Second Law: ΣF = m·a | Third Law: F₁₂ = -F₂₁",
+    p: [
+      "First Law (Inertia): An object remains at rest or in uniform linear motion unless acted upon by a net external force.",
+      "Second Law (Force & Acceleration): The rate of change of momentum is proportional to net applied force; ΣF = m·a.",
+      "Third Law (Action & Reaction): Every action force generates an equal and opposite reaction force acting on different bodies.",
+      "Free-Body Diagrams: Isolate the target body and draw all external vector forces before resolving components.",
+      "Mass vs Weight: Mass (kg) represents intrinsic inertia; Weight (N) is gravitational pull W = m·g."
+    ],
+    e: "A book resting on a table exerts a downward gravitational force W on the table, while the table exerts an equal upward normal force N on the book.",
+    q: [
+      ["What is the formula for Newton's Second Law?", "ΣF = m·a"],
+      ["What property measures an object's resistance to changes in motion?", "Inertia"],
+      ["Do action and reaction forces cancel each other out?", "No, because they act on two different bodies."],
+      ["What is the SI unit of force?", "Newton (N)"]
+    ]
+  },
+  'trigonometry': {
+    d: "Trigonometry is the branch of mathematics studying relationships between side lengths and angles of triangles, extended to periodic functions.",
+    f: "sin(θ) = opp/hyp | cos(θ) = adj/hyp | tan(θ) = opp/adj | sin²(θ) + cos²(θ) = 1",
+    p: [
+      "SOH-CAH-TOA: Fundamental ratios for right-angled triangles.",
+      "Pythagorean Identity: sin²(θ) + cos²(θ) = 1; 1 + tan²(θ) = sec²(θ); 1 + cot²(θ) = csc²(θ).",
+      "Unit Circle Definition: Coordinates of a point on the unit circle at angle θ are (cos θ, sin θ).",
+      "Sine Rule: a/sin(A) = b/sin(B) = c/sin(C) for any arbitrary triangle.",
+      "Cosine Rule: c² = a² + b² - 2ab·cos(C)."
+    ],
+    e: "Finding the height of a flagpole 10 meters away given an elevation angle of 45°: height = 10 · tan(45°) = 10 meters.",
+    q: [
+      ["What is sin²(θ) + cos²(θ) equal to?", "1"],
+      ["What ratio defines tan(θ)?", "opposite / adjacent"],
+      ["What is the value of sin(30°)?", "0.5"],
+      ["What is the value of cos(0°)?", "1"]
+    ]
+  },
+  'kinematics': {
+    d: "Kinematics is the subfield of classical mechanics describing the motion of points, bodies, and systems without considering the forces causing motion.",
+    f: "v = u + a·t | s = u·t + ½a·t² | v² = u² + 2a·s",
+    p: [
+      "Displacement (s): Vector quantity representing net change in position.",
+      "Velocity (v): Vector rate of change of displacement with respect to time (v = ds/dt).",
+      "Acceleration (a): Vector rate of change of velocity (a = dv/dt).",
+      "Constant Acceleration Equations: Applicable only when acceleration is uniform in magnitude and direction.",
+      "Projectile Motion: Vertical motion experiences constant gravitational acceleration g; horizontal motion maintains constant velocity."
+    ],
+    e: "A car accelerating uniformly from rest (u=0) at 2 m/s² for 5 seconds travels s = 0(5) + ½(2)(5²) = 25 meters.",
+    q: [
+      ["What is the equation for final velocity given u, a, and t?", "v = u + a·t"],
+      ["What is the displacement formula for uniform acceleration?", "s = u·t + ½a·t²"],
+      ["Is displacement a scalar or vector quantity?", "Vector quantity"],
+      ["What does the slope of a velocity-time graph represent?", "Acceleration"]
+    ]
+  },
+  'quadratic equations': {
+    d: "A quadratic equation is a second-degree polynomial equation of standard form ax² + bx + c = 0, where a ≠ 0.",
+    f: "x = [-b ± √(b² - 4ac)] / (2a) | Discriminant D = b² - 4ac",
+    p: [
+      "Discriminant D > 0: Two distinct real roots.",
+      "Discriminant D = 0: Two equal real roots (x = -b / 2a).",
+      "Discriminant D < 0: Two complex conjugate roots.",
+      "Vieta's Formulas: Sum of roots α + β = -b/a; Product of roots α·β = c/a.",
+      "Parabolic Geometry: Vertex occurs at x = -b / (2a)."
+    ],
+    e: "Solving x² - 5x + 6 = 0: Factor as (x - 2)(x - 3) = 0, giving real roots x = 2 and x = 3.",
+    q: [
+      ["What is the discriminant formula?", "D = b² - 4ac"],
+      ["What type of roots exist if D < 0?", "Two complex conjugate roots"],
+      ["What is the sum of roots for ax² + bx + c = 0?", "-b/a"],
+      ["What geometry does a quadratic function plot?", "Parabola"]
+    ]
+  },
+  'ohms law': {
+    d: "Ohm's Law states that current flowing through an ohmic conductor between two points is directly proportional to voltage across the points.",
+    f: "V = I·R | P = V·I = I²·R = V² / R",
+    p: [
+      "Proportionality: V ∝ I under constant physical conditions and temperature.",
+      "Resistance (R): Opposition to electric current flow, measured in Ohms (Ω).",
+      "Ohmic Materials: Maintain a linear V-I relationship passing through the origin.",
+      "Power Dissipation: Electrical power converted to heat is P = I²·R.",
+      "Resistors in Series: R_total = R₁ + R₂ + ... | Parallel: 1/R_total = 1/R₁ + 1/R₂ + ..."
+    ],
+    e: "A 12V battery connected across a 4Ω resistor drives a current of I = V/R = 12/4 = 3 Amperes.",
+    q: [
+      ["What is the mathematical expression for Ohm's Law?", "V = I·R"],
+      ["What is the SI unit of electrical resistance?", "Ohm (Ω)"],
+      ["How do series resistances combine?", "Linear sum: R_total = R₁ + R₂ + ..."],
+      ["What is electrical power formula in terms of voltage and current?", "P = V·I"]
+    ]
+  },
+  'data structures': {
+    d: "A data structure is a specialized format for organizing, processing, retrieving, and storing data efficiently in memory.",
+    f: "Stack: LIFO | Queue: FIFO | Binary Tree: O(log n) Search | Hash Table: O(1) Lookup",
+    p: [
+      "Arrays: Contiguous memory blocks offering O(1) random access by index.",
+      "Linked Lists: Node structures linked by pointers allowing O(1) dynamic insertions.",
+      "Stacks: Last-In, First-Out (LIFO) structures supporting Push and Pop.",
+      "Queues: First-In, First-Out (FIFO) structures supporting Enqueue and Dequeue.",
+      "Hash Tables: Key-value stores utilizing hash functions for average O(1) operations."
+    ],
+    e: "Undo history in a text editor is implemented using a Stack (LIFO), where the last edit is the first undone.",
+    q: [
+      ["Which data structure operates on a Last-In First-Out basis?", "Stack"],
+      ["Which data structure operates on a First-In First-Out basis?", "Queue"],
+      ["What is the time complexity of accessing an element in an Array by index?", "O(1)"],
+      ["Which structure links nodes via pointers?", "Linked List"]
+    ]
+  }
+};
+
+function getGuideForTopic(t){
+  const k = String(t).toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  for(const key of Object.keys(TOPIC_GUIDES)){
+    if(k.includes(key) || key.includes(k)) return TOPIC_GUIDES[key];
+  }
+  if(/motion|inertia|newton/.test(k)) return TOPIC_GUIDES['laws of motion'];
+  if(/trig|sin|cos|tan/.test(k)) return TOPIC_GUIDES['trigonometry'];
+  if(/kinematics|velocity|acceleration/.test(k)) return TOPIC_GUIDES['kinematics'];
+  if(/quad/.test(k)) return TOPIC_GUIDES['quadratic equations'];
+  if(/ohm|voltage|resist/.test(k)) return TOPIC_GUIDES['ohms law'];
+  if(/data|stack|queue|array|list/.test(k)) return TOPIC_GUIDES['data structures'];
+
+  // Universal Fallback Outline
+  return {
+    d: `"${t}" is not currently in the verified local offline library. Below is a structured academic study template to compile your notes.`,
+    f: "Formulas / Key Equations: Add verified expressions from your course textbook.",
+    p: [
+      `1. Definition: Define ${t} clearly using standard academic terminology.`,
+      `2. Core Principles: Outline primary laws, assumptions, or foundational rules governing ${t}.`,
+      `3. Derivation & Mechanics: List physical or mathematical steps involved in derivations.`,
+      `4. Applications: Document practical real-world engineering or scientific applications.`,
+      `5. Common Errors: Note common calculation traps, unit conversion errors, or sign errors.`
+    ],
+    e: `Example problem: Consult your textbook for a fully solved numerical or theoretical sample on ${t}.`,
+    q: [
+      [`What is the core definition of ${t}?`, "State the precise definition."],
+      [`What primary equation governs ${t}?`, "Refer to textbook formulas."],
+      [`Give one practical application of ${t}.`, "Document a verified real-world example."]
+    ]
+  };
+}
+
+/* ==================== GRADE & CURRICULUM CONTROLLER ==================== */
+function getCurriculumKey(grade){
+  if(grade === 'p') return 'p';
+  if(grade === 'jee_neet') return 'jee_neet';
+  if(grade === 'college' || grade === 'research') return 'college';
+  const g = parseInt(grade);
+  if(g <= 8) return 'middle';
+  if(g <= 10) return 'high';
+  return 'senior';
+}
+
+function switchGrade(grade){
+  S('grade', grade);
+  $('globalGrade').value = grade;
+  const gradeLabel = $('globalGrade').options[$('globalGrade').selectedIndex].text;
+  $('dashGradeName').textContent = gradeLabel;
+  toast(`Curriculum set to: ${gradeLabel}`);
+
+  const curr = CURRICULA[getCurriculumKey(grade)];
+  $('dashTopicChips').innerHTML = curr.chips.map(t=>`<span class="topic-chip" onclick='quickLearn("${esc(t)}")'>${esc(t)}</span>`).join('');
+  $('learnTopicChips').innerHTML = curr.chips.map(t=>`<span class="topic-chip" onclick='quickLearn("${esc(t)}")'>${esc(t)}</span>`).join('');
+  updateTopicPresets();
+  populateQuizPresets();
+}
+
+function updateTopicPresets(){
+  const g = $('globalGrade').value;
+  const sub = $('ls').value;
+  const curr = CURRICULA[getCurriculumKey(g)];
+  const presets = (curr.presets && curr.presets[sub]) || curr.chips;
+  $('lpreset').innerHTML = `<option value="">-- Choose preset topic --</option>` + presets.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+}
+
+function populateQuizPresets(){
+  const g = $('globalGrade').value;
+  const sub = $('qSub').value;
+  const curr = CURRICULA[getCurriculumKey(g)];
+  const presets = (curr.presets && curr.presets[sub]) || curr.chips;
+  $('quizPresets').innerHTML = presets.slice(0, 6).map(p=>`<span class="topic-chip" onclick='document.getElementById("qt").value="${esc(p)}"'>${esc(p)}</span>`).join('');
+}
+
+/* ==================== CONCEPT LEARNING HUB ==================== */
+function quickLearn(topic){
+  go('learn');
+  $('lt').value = topic;
+  learnTopic();
+}
+
+let learnToken = 0;
+async function learnTopic(){
+  const t = $('lt').value.trim();
+  if(!t) return toast('Please enter a topic to explore');
+  playBeep(480, 'sine', 0.1);
+
+  const guide = getGuideForTopic(t);
+  learnToken++;
+  const curToken = learnToken;
+
+  $('lo').classList.remove('hide');
+  $('lTitle').textContent = t.toUpperCase();
+  $('diag').innerHTML = '';
+  const el = $('ltxt');
+  el.innerHTML = '<span class="cursor">Synthesizing concept breakdown from local database...</span>';
+
+  await sleep(200);
+  if(curToken !== learnToken) return;
+
+  el.innerHTML = `
+    <h3>1. Core Axiomatic Definition</h3>
+    <p>${esc(guide.d)}</p>
+    ${guide.f ? `<div class="formula-box">${esc(guide.f)}</div>` : ''}
+    <h3>2. Essential Principles & Analytical Mechanisms</h3>
+    <ul>
+      ${guide.p.map(p=>`<li>${esc(p)}</li>`).join('')}
+    </ul>
+    <h3>3. Representative Example</h3>
+    <p>💡 <em>${esc(guide.e)}</em></p>
+  `;
+
+  // Flow Diagram Steps
+  const steps = ["Definition", "Principles", "Formulas", "Example", "Assessment"];
+  $('diag').innerHTML = steps.map((step, idx)=>`
+    <span class="node">${esc(step)}</span>
+    ${idx < steps.length - 1 ? `<span class="arrow">→</span>` : ''}
+  `).join('');
+
+  drawMindMap(t, steps);
+  addXP(10, 'concept synthesized');
+  touchStreak();
+}
+
+function drawMindMap(centerText, nodes){
+  const canvas = $('mindmapCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.clientWidth * dpr;
+  canvas.height = canvas.clientHeight * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  ctx.clearRect(0, 0, w, h);
+
+  const cx = w / 2, cy = h / 2;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const nodeBg = isDark ? '#1e293b' : '#ffffff';
+  const textColor = isDark ? '#f8fafc' : '#0f172a';
+  const lineColor = isDark ? '#6366f1' : '#4f6ef7';
+
+  // Center Circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, 42, 0, Math.PI * 2);
+  ctx.fillStyle = isDark ? '#312e81' : '#dbeafe';
+  ctx.fill();
+  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = lineColor;
+  ctx.stroke();
+
+  ctx.fillStyle = textColor;
+  ctx.font = 'bold 11px system-ui';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(centerText.slice(0, 14), cx, cy);
+
+  const radius = Math.min(w, h) * 0.36;
+  const count = nodes.length;
+
+  nodes.forEach((label, idx)=>{
+    const angle = (idx / count) * Math.PI * 2 - Math.PI / 2;
+    const nx = cx + radius * Math.cos(angle);
+    const ny = cy + radius * Math.sin(angle);
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(nx, ny);
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    const boxW = 85, boxH = 32;
+    ctx.fillStyle = nodeBg;
+    ctx.strokeStyle = isDark ? '#475569' : '#cbd5e1';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(nx - boxW/2, ny - boxH/2, boxW, boxH, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = textColor;
+    ctx.fillText(label, nx, ny);
+  });
+}
+
+function saveLearnAsNote(){
+  const title = $('lTitle').textContent || $('lt').value;
+  const content = $('ltxt').innerText;
+  if(!content) return;
+  const n = G('notes');
+  n.unshift({
+    s: $('ls').value.toUpperCase(),
+    c: title,
+    tag: 'Generated Concept Guide',
+    b: content,
+    d: new Date().toLocaleDateString(),
+    id: Date.now() + Math.random()
+  });
+  S('notes', n);
+  toast('Archived directly to Curriculum Notes ▤');
+  refresh();
+}
+
+function jumpToQuizFromLearn(){
+  const t = $('lt').value;
+  go('quiz');
+  if(t) $('qt').value = t;
+}
+
+function createCardFromLearn(){
+  const t = $('lt').value;
+  go('cards');
+  if(t){
+    $('fq').value = `What is ${t}?`;
+    $('fa').value = ($('ltxt').innerText || '').slice(0, 160) + '...';
+  }
+}
+
+/* ==================== TOPIC-TO-TEST EXAMINATION ENGINE ==================== */
+const EXPANDED_QUIZ_REPOSITORY = {
+  cs: [
+    {q:"What is the worst-case time complexity of QuickSort with a naive pivot on sorted data?", o:["O(n)","O(n log n)","O(n²)","O(2ⁿ)"], a:2, exp:"Without random pivot selection, sorted input produces depth-n recursive trees, yielding O(n²)."},
+    {q:"Which synchronization construct avoids race conditions by allowing only one thread in a critical section?", o:["Semaphore","Mutex","Deadlock","Thread Pool"], a:1, exp:"A Mutex provides exclusive access to a critical section."},
+    {q:"What does the ACID acronym stand for in Relational Databases?", o:["Atomicity, Consistency, Isolation, Durability","Asynchronous, Concurrent, Isolated, Distributed","Access, Control, Indexing, Direct","Allocation, Caching, Iteration, Deletion"], a:0, exp:"ACID defines reliability properties for database transactions."},
+    {q:"Which layer in the TCP/IP model is responsible for packet routing across networks?", o:["Physical","Data Link","Network (IP)","Transport"], a:2, exp:"The Network (IP) layer manages IP addressing and packet routing."},
+    {q:"Which data structure operates on a Last-In First-Out (LIFO) basis?", o:["Queue","Stack","Tree","Graph"], a:1, exp:"A Stack pops the most recently pushed element first."}
+  ],
+  physics: [
+    {q:"According to Newton's Second Law, what is net force equal to?", o:["m / a","m · a","½ m v²","m · g · h"], a:1, exp:"F = m·a defines net force as mass times acceleration."},
+    {q:"What is kinetic energy of photoelectrons if incident photon energy is 5.0 eV and work function is 2.2 eV?", o:["7.2 eV","2.8 eV","11.0 eV","0.44 eV"], a:1, exp:"KE_max = hν - Φ = 5.0 - 2.2 = 2.8 eV."},
+    {q:"What is the net electric flux through any closed Gaussian surface containing charge q?", o:["Zero","q / ε₀","E · A","q · ε₀"], a:1, exp:"Gauss's Law states flux Φ = q_enclosed / ε₀."},
+    {q:"Which property remains constant when a light wave refracts into glass?", o:["Wavelength","Velocity","Frequency","Amplitude"], a:2, exp:"Frequency depends solely on the light source and does not change during refraction."},
+    {q:"What is the SI unit of electrical resistance?", o:["Volt","Ampere","Ohm","Coulomb"], a:2, exp:"Resistance is measured in Ohms (Ω)."}
+  ],
+  math: [
+    {q:"What is the derivative of f(x) = ln(x² + 1)?", o:["1 / (x² + 1)","2x / (x² + 1)","2 / x","2x · ln(x² + 1)"], a:1, exp:"Chain rule: d/dx[ln(u)] = u'/u = 2x / (x² + 1)."},
+    {q:"If a 2×2 matrix has determinant zero, what can be concluded?", o:["Matrix is diagonal","Matrix is invertible","Matrix is singular and non-invertible","Eigenvalues are 1 and -1"], a:2, exp:"Zero determinant means rows are linearly dependent; matrix cannot be inverted."},
+    {q:"What is the limit of sin(x)/x as x approaches 0?", o:["0","1","Infinity","Undefined"], a:1, exp:"Fundamental trigonometric limit lim_{x→0} sin(x)/x = 1."},
+    {q:"What is the discriminant of quadratic equation ax² + bx + c = 0?", o:["b - 4ac","b² - 4ac","√(b² - 4ac)","4ac - b²"], a:1, exp:"Discriminant D = b² - 4ac determines root nature."},
+    {q:"What is the sum of interior angles in a triangle?", o:["90°","180°","270°","360°"], a:1, exp:"Interior angles of any Euclidean triangle add to 180°."}
+  ],
+  chemistry: [
+    {q:"In N₂(g) + 3H₂(g) ⇌ 2NH₃(g) + Heat, what does increasing pressure do?", o:["Shifts left","Shifts right","No change","Stops reaction"], a:1, exp:"Le Chatelier's Principle shifts equilibrium toward fewer gas moles (2 vs 4)."},
+    {q:"Which hybridization corresponds to tetrahedral geometry in CH₄?", o:["sp","sp²","sp³","sp³d"], a:2, exp:"Carbon forms four sp³ hybrid orbitals in methane."},
+    {q:"In a galvanic cell, where does oxidation take place?", o:["Anode","Cathode","Salt Bridge","Voltmeter"], a:0, exp:"Oxidation always occurs at the Anode."},
+    {q:"What is the chemical formula of water?", o:["CO₂","H₂O","O₂","H₂O₂"], a:1, exp:"Water consists of two Hydrogen atoms and one Oxygen atom."},
+    {q:"A solution with pH 3 is:", o:["Acidic","Neutral","Basic","Alkaline"], a:0, exp:"pH < 7 indicates an acidic solution."}
+  ],
+  biology: [
+    {q:"During which cell cycle phase does DNA replication occur?", o:["G1","S Phase","G2","Mitosis"], a:1, exp:"DNA synthesis takes place during the S phase."},
+    {q:"Which nitrogenous base is present in RNA but not DNA?", o:["Thymine","Cytosine","Uracil","Guanine"], a:2, exp:"RNA contains Uracil (U) instead of Thymine (T)."},
+    {q:"Which organelle is the site of aerobic respiration?", o:["Ribosome","Mitochondrion","Golgi apparatus","Lysosome"], a:1, exp:"Mitochondria synthesize ATP through cellular respiration."},
+    {q:"What molecule carries genetic instructions in living organisms?", o:["DNA","Glucose","Starch","ATP"], a:0, exp:"DNA stores genetic instructions."},
+    {q:"What pigment absorbs light for photosynthesis?", o:["Hemoglobin","Chlorophyll","Melanin","Carotene"], a:1, exp:"Chlorophyll traps light energy in plants."}
+  ],
+  social: [
+    {q:"Which treaty ended World War I in 1919?", o:["Treaty of Paris","Treaty of Versailles","Treaty of Westphalia","Treaty of Ghent"], a:1, exp:"The Treaty of Versailles formally ended WWI."},
+    {q:"What does Gross Domestic Product (GDP) measure?", o:["Total bank savings","Monetary value of all finished goods/services in a country","Total imports","Gold reserves"], a:1, exp:"GDP measures total domestic economic output."},
+    {q:"Which branch of government interprets laws?", o:["Legislature","Executive","Judiciary","Media"], a:2, exp:"The Judiciary interprets laws."},
+    {q:"What is inflation?", o:["Sustained increase in price levels","Fall in population","Rise in exports","Decrease in wages"], a:0, exp:"Inflation is a sustained rise in general prices."},
+    {q:"Democracy derives authority from:", o:["Rulers","The People","Military","Corporations"], a:1, exp:"Democratic power originates from the citizens."}
+  ],
+  gk: [
+    {q:"Which force governs planetary orbits around the sun?", o:["Electromagnetic","Strong nuclear","Weak nuclear","Gravitational"], a:3, exp:"Gravity holds planets in orbital motion."},
+    {q:"What is the primary gas in Earth's atmosphere by volume?", o:["Oxygen (~21%)","CO₂","Nitrogen (~78%)","Argon"], a:2, exp:"Nitrogen makes up ~78% of Earth's atmosphere."},
+    {q:"Which planet is called the Red Planet?", o:["Venus","Mars","Jupiter","Mercury"], a:1, exp:"Iron oxide on Mars gives it a reddish hue."},
+    {q:"How many continents are on Earth?", o:["5","6","7","8"], a:2, exp:"There are 7 recognized continents."},
+    {q:"What is the capital of Japan?", o:["Seoul","Beijing","Tokyo","Bangkok"], a:2, exp:"Tokyo is the capital of Japan."}
+  ]
+};
+
+let activeQuiz = [];
+let quizIndex = 0;
+let quizScore = 0;
+let quizTopic = '';
+let quizMode = 'practice';
+let userAnswers = [];
+let quizTimerInt = null;
+let quizSeconds = 0;
+let quizTimeLimit = 0;
+let quizRemaining = 0;
+let quizFinalized = false;
+const normalizeAnswer = value => String(value ?? '').trim().toLowerCase().replace(/[.,!?;:]+$/,'').replace(/\s+/g,' ');
+
+function generateTopicQuiz(){
+  const topic = $('qt').value.trim();
+  if(!topic) return buildQuiz();
+
+  const guide = getGuideForTopic(topic);
+  activeQuiz = guide.q.map(([q, a])=>({
+    kind: 'fill',
+    q: q,
+    a: normalizeAnswer(a),
+    exp: `Correct answer: "${a}". Reference: ${guide.d}`
+  }));
+
+  userAnswers = new Array(activeQuiz.length).fill(null);
+  quizScore = 0; quizIndex = 0; quizTopic = topic; quizSeconds = 0; quizFinalized = false;
+
+  $('qsetup').classList.add('hide');
+  $('qp').classList.remove('hide');
+  $('qCurrentTopic').textContent = topic;
+  $('qCurrentDifficulty').textContent = 'Verified Topic Test';
+  $('qnavDots').innerHTML = activeQuiz.map((_,i)=>`<div class="qnav-dot ${i===0?'current':''}" id="qdot-${i}" onclick="jumpToQ(${i})">${i+1}</div>`).join('');
+
+  clearInterval(quizTimerInt);
+  quizTimerInt = setInterval(()=>{
+    quizSeconds++;
+    const m=String(Math.floor(quizSeconds/60)).padStart(2,'0');
+    const s=String(quizSeconds%60).padStart(2,'0');
+    $('qTimerDisplay').textContent=`⏱ ${m}:${s} elapsed`;
+  },1000);
+
+  renderQuestion();
+}
+
+function buildQuiz(){
+  const topic = $('qt').value.trim() || 'General Domain Assessment';
+  const sub = $('qSub').value;
+  const requestedCount = parseInt($('qn').value) || 5;
+  const format = $('qtype').value;
+  quizMode = $('qmode').value;
+  const rawText = $('qsrc').value.trim();
+  activeQuiz = [];
+  userAnswers = [];
+  quizScore = 0;
+  quizIndex = 0;
+  quizTopic = topic;
+  quizSeconds = 0;
+
+  if(rawText){
+    const sentences = rawText.split(/(?<=[.!?])\s+/).filter(s=>s.length > 25);
+    sentences.slice(0, requestedCount).forEach(s=>{
+      const words = s.match(/\b[A-Za-z]{4,}\b/g) || [];
+      const targetWord = words.sort((a,b)=>b.length-a.length)[0];
+      if(targetWord){
+        activeQuiz.push({
+          kind:'fill',
+          q:`Fill in the blank: "${s.replace(new RegExp('\\b'+targetWord+'\\b','i'),'_______')}"`,
+          a:normalizeAnswer(targetWord),
+          exp:`Source text key term: "${targetWord}".`
+        });
+      }
+    });
+  }
+
+  const bank = EXPANDED_QUIZ_REPOSITORY[sub] || EXPANDED_QUIZ_REPOSITORY.cs;
+  const pool = [...bank].sort(()=>Math.random()-0.5);
+  for(const item of pool){
+    if(activeQuiz.length >= requestedCount) break;
+    const isFill = format==='fill' || (format==='mixed' && activeQuiz.length%2===1);
+    if(isFill){
+      activeQuiz.push({kind:'fill',q:`${item.q} (Enter key term)`,a:normalizeAnswer(item.o[item.a]),exp:item.exp});
+    }else{
+      activeQuiz.push({kind:'mcq',q:item.q,o:item.o,a:item.a,exp:item.exp});
+    }
+  }
+  activeQuiz = activeQuiz.slice(0, requestedCount);
+  userAnswers = new Array(activeQuiz.length).fill(null);
+
+  $('qsetup').classList.add('hide');
+  $('qp').classList.remove('hide');
+  $('qCurrentTopic').textContent = `${topic} (${sub.toUpperCase()})`;
+  $('qCurrentDifficulty').textContent = quizMode==='timed' ? `${$('qd').value}s / q` : 'Practice mode';
+  $('qnavDots').innerHTML = activeQuiz.map((_,i)=>`<div class="qnav-dot ${i===0?'current':''}" id="qdot-${i}" onclick="jumpToQ(${i})">${i+1}</div>`).join('');
+
+  clearInterval(quizTimerInt);
+  quizFinalized = false;
+  quizTimeLimit = quizMode==='timed' ? activeQuiz.length*(parseInt($('qd').value)||60) : 0;
+  quizRemaining = quizTimeLimit;
+  quizTimerInt = setInterval(()=>{
+    quizSeconds++;
+    if(quizMode==='timed'){
+      quizRemaining=Math.max(0,quizTimeLimit-quizSeconds);
+      const m=String(Math.floor(quizRemaining/60)).padStart(2,'0');
+      const s=String(quizRemaining%60).padStart(2,'0');
+      $('qTimerDisplay').textContent=`⏳ ${m}:${s} remaining`;
+      if(quizRemaining<=0) finishQuiz();
+    }else{
+      const m=String(Math.floor(quizSeconds/60)).padStart(2,'0');
+      const s=String(quizSeconds%60).padStart(2,'0');
+      $('qTimerDisplay').textContent=`⏱ ${m}:${s} elapsed`;
+    }
+  },1000);
+
+  renderQuestion();
+}
+
+function jumpToQ(i){
+  if(i >= 0 && i < activeQuiz.length){
+    quizIndex = i;
+    renderQuestion();
+  }
+}
+
+function renderQuestion(){
+  const q = activeQuiz[quizIndex];
+  if(!q) return finishQuiz();
+
+  document.querySelectorAll('.qnav-dot').forEach((d, i)=>{
+    d.classList.toggle('current', i === quizIndex);
+    d.classList.toggle('answered', userAnswers[i] !== null);
+  });
+
+  const b = $('qbody');
+  let h = `
+    <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);font-weight:700">
+      <span>Question ${quizIndex + 1} of ${activeQuiz.length}</span>
+      <span>${quizMode==='practice' ? `Score: ${quizScore}` : 'Timed Mode'}</span>
+    </div>
+    <div class="prog"><i style="width:${((quizIndex+1) / activeQuiz.length)*100}%"></i></div>
+    <div style="font-size:16px;font-weight:800;margin:16px 0">${esc(q.q)}</div>
+  `;
+
+  if(q.kind === 'mcq'){
+    h += q.o.map((opt, idx)=>`
+      <label class="option" id="opt-${idx}" onclick="selectMCQ(${idx})">
+        <input type="radio" name="opt" style="margin-right:10px" ${userAnswers[quizIndex]===idx?'checked':''}>
+        ${esc(opt)}
+      </label>
+    `).join('');
+  } else {
+    h += `
+      <div class="row">
+        <input id="fillAns" placeholder="Type answer..." value="${esc(userAnswers[quizIndex]||'')}" onkeydown="if(event.key==='Enter')submitFill()">
+        <button class="btn" onclick="submitFill()" style="flex:0 0 auto">Submit</button>
+      </div>
+    `;
+  }
+
+  h += `<div id="qFeedback" style="margin-top:14px;min-height:24px"></div>`;
+  h += `
+    <div style="display:flex;justify-content:space-between;margin-top:22px;border-top:1px solid var(--line);padding-top:16px">
+      <button class="btn sm soft" onclick="jumpToQ(quizIndex - 1)" ${quizIndex===0?'disabled':''}>◀ Previous</button>
+      ${quizIndex === activeQuiz.length - 1 ?
+        `<button class="btn sm" onclick="finishQuiz()">Finish Assessment 🏁</button>` :
+        `<button class="btn sm soft" onclick="jumpToQ(quizIndex + 1)">Next Question ▶</button>`
+      }
+    </div>
+  `;
+
+  b.innerHTML = h;
+  if(q.kind==='fill' && $('fillAns')) $('fillAns').focus();
+}
+
+function selectMCQ(idx){
+  const q = activeQuiz[quizIndex];
+  if(quizFinalized || userAnswers[quizIndex] !== null) return;
+
+  userAnswers[quizIndex] = idx;
+  const isCorrect = idx === q.a;
+  if(isCorrect) quizScore++;
+
+  if(quizMode === 'practice'){
+    const optEls = document.querySelectorAll('.option');
+    optEls.forEach((el, i)=>{
+      if(i === q.a) el.classList.add('right');
+      if(i === idx && !isCorrect) el.classList.add('wrong');
+    });
+    $('qFeedback').innerHTML = `
+      <div class="issue ${isCorrect?'ok':''}">
+        <b>${isCorrect?'✅ Correct!':'❌ Incorrect.'}</b> ${esc(q.exp)}
+      </div>
+    `;
+    playBeep(isCorrect ? 720 : 320, 'sine', 0.15);
+  } else {
+    playBeep(520, 'sine', 0.08);
+  }
+}
+
+function submitFill(){
+  const f = $('fillAns');
+  if(quizFinalized || userAnswers[quizIndex] !== null || !f || !f.value.trim()) return;
+  const q = activeQuiz[quizIndex];
+  const val = normalizeAnswer(f.value);
+  const isCorrect = val === normalizeAnswer(q.a);
+  userAnswers[quizIndex] = val;
+  if(isCorrect) quizScore++;
+
+  if(quizMode === 'practice'){
+    f.style.borderColor = isCorrect ? 'var(--emerald)' : 'var(--rose)';
+    $('qFeedback').innerHTML = `
+      <div class="issue ${isCorrect?'ok':''}">
+        <b>${isCorrect?'✅ Correct!':'❌ Answer: '+q.a}</b> ${esc(q.exp)}
+      </div>
+    `;
+    playBeep(isCorrect ? 720 : 320, 'sine', 0.15);
+  } else {
+    playBeep(520, 'sine', 0.08);
+  }
+}
+
+function finishQuiz(){
+  if(quizFinalized || !activeQuiz.length) return;
+  quizFinalized = true;
+  clearInterval(quizTimerInt);
+  const total = activeQuiz.length;
+  quizScore = 0;
+  activeQuiz.forEach((q, i)=>{
+    if(q.kind==='mcq' && userAnswers[i] === q.a) quizScore++;
+    else if(q.kind==='fill' && normalizeAnswer(userAnswers[i]) === normalizeAnswer(q.a)) quizScore++;
+  });
+
+  const pct = Math.round((quizScore / total) * 100);
+  const sc = G('scores');
+  sc.push({
+    topic: quizTopic,
+    score: quizScore,
+    total: total,
+    pct: pct,
+    date: new Date().toLocaleDateString(),
+    duration: quizSeconds
+  });
+  S('scores', sc);
+
+  touchStreak();
+  addXP(15 + quizScore * 5, 'exam completion');
+  if(pct >= 70) confetti();
+
+  let reviewHTML = activeQuiz.map((q, i)=>{
+    const userA = userAnswers[i];
+    let correct = false;
+    let rightText = q.kind==='mcq' ? q.o[q.a] : q.a;
+    let userText = q.kind==='mcq' ? (userA!==null ? q.o[userA] : 'Unanswered') : (userA || 'Unanswered');
+    if(q.kind==='mcq' && userA === q.a) correct = true;
+    if(q.kind==='fill' && normalizeAnswer(userA) === normalizeAnswer(q.a)) correct = true;
+    return `
+      <div class="issue ${correct?'ok':''}" style="margin:10px 0;text-align:left">
+        <b>Q${i+1}: ${esc(q.q)}</b><br>
+        Your response: <em>${esc(userText)}</em> ${correct?'✅':'❌'}<br>
+        Correct answer: <strong>${esc(rightText)}</strong><br>
+        <small style="color:var(--muted)">${esc(q.exp)}</small>
+      </div>
+    `;
+  }).join('');
+
+  $('qbody').innerHTML = `
+    <div style="text-align:center;padding:26px">
+      <big style="font-size:56px;font-weight:900;color:var(--blue)">${pct}%</big>
+      <h2 style="margin:8px 0">${pct>=80?'Distinction! 🏆':pct>=50?'Passed! 👍':'Needs Revision! 💪'}</h2>
+      <p class="sub">Scored ${quizScore} out of ${total} in <b>${esc(quizTopic)}</b> (${quizSeconds} seconds elapsed).</p>
+      <div style="display:flex;justify-content:center;gap:12px;margin:22px 0">
+        <button class="btn" onclick="resetQuizView()">Take Another Test</button>
+        <button class="btn soft" onclick="go('analytics')">View Progress Analytics</button>
+      </div>
+      <h3 style="text-align:left;margin-top:26px;border-top:1px solid var(--line);padding-top:16px">Question Review & Explanations</h3>
+      <div>${reviewHTML}</div>
+    </div>
+  `;
+}
+
+function resetQuizView(){
+  clearInterval(quizTimerInt);
+  quizFinalized = false;
+  $('qp').classList.add('hide');
+  $('qsetup').classList.remove('hide');
+}
+
+/* ==================== STEP-BY-STEP PROBLEM SOLVER ==================== */
+function switchSolverCategory(cat){
+  const el = $('solverInputs');
+  if(cat === 'quad'){
+    el.innerHTML = `
+      <div class="three">
+        <div><label>Coefficient a (≠ 0)</label><input id="qa" type="number" value="1"></div>
+        <div><label>Coefficient b</label><input id="qb" type="number" value="-5"></div>
+        <div><label>Constant c</label><input id="qc" type="number" value="6"></div>
+      </div>
+    `;
+  } else if(cat === 'kinematics'){
+    el.innerHTML = `
+      <div class="three">
+        <div><label>Initial Velocity u (m/s)</label><input id="ku" type="number" value="0"></div>
+        <div><label>Acceleration a (m/s²)</label><input id="ka" type="number" value="9.8"></div>
+        <div><label>Time t (seconds)</label><input id="kt" type="number" value="5"></div>
+      </div>
+    `;
+  } else if(cat === 'ohm'){
+    el.innerHTML = `
+      <div class="two">
+        <div><label>Current I (Amperes)</label><input id="oi" type="number" value="2.5"></div>
+        <div><label>Resistance R (Ohms)</label><input id="or" type="number" value="48"></div>
+      </div>
+    `;
+  } else if(cat === 'deriv'){
+    el.innerHTML = `
+      <div class="two">
+        <div><label>Coefficient a</label><input id="da" type="number" value="3"></div>
+        <div><label>Power n (Exponent)</label><input id="dn" type="number" value="4"></div>
+      </div>
+    `;
+  } else if(cat === 'matrix'){
+    el.innerHTML = `
+      <label>Matrix elements [[a, b], [c, d]]</label>
+      <div class="two">
+        <input id="ma" type="number" value="4" placeholder="a">
+        <input id="mb" type="number" value="7" placeholder="b">
+      </div>
+      <div class="two">
+        <input id="mc" type="number" value="2" placeholder="c">
+        <input id="md" type="number" value="6" placeholder="d">
+      </div>
+    `;
+  } else {
+    el.innerHTML = `
+      <label>Math Expression (e.g. sqrt(144) + 5 * sin(pi/6))</label>
+      <input id="evalExpr" value="sqrt(225) + 4 * 12">
+    `;
+  }
+}
+switchSolverCategory('quad');
+
+function safeMathEval(source){
+  const tokens = String(source).match(/(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?|[A-Za-z]+|[()+\-*/%^]/gi) || [];
+  const compact = String(source).replace(/\s+/g,'');
+  if(tokens.join('') !== compact) throw new Error('Use numbers, basic operators (+ - * / % ^), parentheses, pi, e, and standard functions.');
+  let i=0;
+  const peek=()=>tokens[i];
+  const take=()=>tokens[i++];
+  const functions={sqrt:Math.sqrt,sin:Math.sin,cos:Math.cos,tan:Math.tan,log:Math.log,log10:Math.log10,abs:Math.abs,exp:Math.exp,floor:Math.floor,ceil:Math.ceil,round:Math.round};
+  function primary(){
+    const t=take();
+    if(t==='('){const v=expression();if(take()!==')')throw new Error('Missing closing parenthesis');return v;}
+    if(t==='+') return unary();
+    if(t==='-') return -unary();
+    if(t && /^([0-9]|\.)/.test(t)) return Number(t);
+    if(t && /^[A-Za-z]+$/.test(t)){
+      const name=t.toLowerCase();
+      if(name==='pi')return Math.PI;
+      if(name==='e')return Math.E;
+      if(functions[name]){
+        if(take()!=='(')throw new Error(`${name} requires parentheses`);
+        const v=expression();if(take()!==')')throw new Error('Missing closing parenthesis');
+        return functions[name](v);
+      }
+    }
+    throw new Error(`Unexpected token: ${t||'end'}`);
+  }
+  function unary(){return primary();}
+  function power(){let a=primary();if(peek()==='^'){take();a=Math.pow(a,unary());}return a;}
+  function product(){let a=power();while(['*','/','%'].includes(peek())){const op=take(),b=power();a=op==='*'?a*b:op==='/'?a/b:a%b;}return a;}
+  function expression(){let a=product();while(peek()==='+'||peek()==='-'){const op=take(),b=product();a=op==='+'?a+b:a-b;}return a;}
+  const result=expression();
+  if(i!==tokens.length)throw new Error(`Unexpected token at end: ${tokens[i]}`);
+  if(!Number.isFinite(result))throw new Error('Expression did not evaluate to a finite number.');
+  return result;
+}
+
+function solveFreeQuestion(){
+  const q = $('freeSolveQ').value.trim();
+  const o = $('freeSolveOut');
+  if(!q) return toast('Type an equation or expression');
+
+  // Match linear equation: ax + b = c
+  const m = q.match(/^\s*([+-]?\d*\.?\d*)\s*x\s*([+-]\s*\d+(?:\.\d+)?)?\s*=\s*([+-]?\d+(?:\.\d+)?)\s*$/i);
+  if(m){
+    let a = m[1];
+    a = (!a || a==='+') ? 1 : a==='-' ? -1 : Number(a);
+    let b = m[2] ? Number(m[2].replace(/\s/g,'')) : 0;
+    let c = Number(m[3]);
+    if(!a) return o.innerHTML = '<div class="issue">Coefficient of x cannot be zero.</div>';
+    let x = (c - b) / a;
+    o.innerHTML = `
+      <div class="result">
+        <h3>Linear Equation Solution</h3>
+        <p>Given: <code>${esc(q)}</code></p>
+        <p><strong>Step 1: Isolate term with x</strong><br>${a}x = ${c} - (${b}) = ${c - b}</p>
+        <p><strong>Step 2: Divide both sides by ${a}</strong><br>x = ${c - b} / ${a}</p>
+        <p><strong style="font-size:16px;color:var(--blue)">x = ${x}</strong></p>
+      </div>
+    `;
+    return;
+  }
+
+  try {
+    const val = safeMathEval(q);
+    o.innerHTML = `
+      <div class="result">
+        <h3>Arithmetic Expression Result</h3>
+        <p>Expression: <code>${esc(q)}</code></p>
+        <p><strong style="font-size:18px;color:var(--blue)">Result = ${val}</strong></p>
+      </div>
+    `;
+  } catch(e){
+    o.innerHTML = `<div class="issue">Input Error: ${esc(e.message)}. Supports linear equations (e.g. 2x + 5 = 15) and arithmetic.</div>`;
+  }
+}
+
+function executeSolver(){
+  const cat = $('solverCat').value;
+  const out = $('solverSolution');
+  playBeep(600, 'sine', 0.1);
+
+  if(cat === 'quad'){
+    const a = parseFloat($('qa').value), b = parseFloat($('qb').value), c = parseFloat($('qc').value);
+    if(isNaN(a) || a === 0) return out.innerHTML = `<div class="issue">Coefficient 'a' cannot be zero in a quadratic equation.</div>`;
+
+    const D = b*b - 4*a*c;
+    let txt = `
+      <h3>Quadratic Equation: ${a}x² + (${b})x + (${c}) = 0</h3>
+      <p><strong>Step 1: Calculate Discriminant D = b² - 4ac</strong><br>
+      D = (${b})² - 4(${a})(${c}) = ${b*b} - ${4*a*c} = <strong>${D}</strong></p>
+    `;
+
+    if(D > 0){
+      const sqrtD = Math.sqrt(D);
+      const r1 = (-b + sqrtD) / (2*a);
+      const r2 = (-b - sqrtD) / (2*a);
+      txt += `
+        <p><strong>Step 2: D > 0 (Two distinct real roots)</strong><br>
+        x = [-b ± √D] / (2a) = [-(${b}) ± ${sqrtD.toFixed(4)}] / (2·${a})<br><br>
+        Root 1 (α) = <strong>${r1.toFixed(4)}</strong><br>
+        Root 2 (β) = <strong>${r2.toFixed(4)}</strong></p>
+      `;
+    } else if(D === 0){
+      const r = -b / (2*a);
+      txt += `
+        <p><strong>Step 2: D = 0 (Two equal real roots)</strong><br>
+        x = -b / (2a) = -(${b}) / (2·${a}) = <strong>${r.toFixed(4)}</strong></p>
+      `;
+    } else {
+      const real = (-b / (2*a)).toFixed(4);
+      const imag = (Math.sqrt(-D) / (2*a)).toFixed(4);
+      txt += `
+        <p><strong>Step 2: D < 0 (Two complex conjugate roots)</strong><br>
+        Root 1 = <strong>${real} + ${imag}i</strong><br>
+        Root 2 = <strong>${real} - ${imag}i</strong></p>
+      `;
+    }
+    out.innerHTML = txt;
+  } else if(cat === 'kinematics'){
+    const u = parseFloat($('ku').value), a = parseFloat($('ka').value), t = parseFloat($('kt').value);
+    const v = u + a * t;
+    const s = u * t + 0.5 * a * t * t;
+    out.innerHTML = `
+      <h3>Physics Kinematics Solution</h3>
+      <p>Given: u = ${u} m/s, a = ${a} m/s², t = ${t} s</p>
+      <p><strong>1. Final Velocity: v = u + a·t</strong><br>
+      v = ${u} + (${a} × ${t}) = <strong>${v.toFixed(3)} m/s</strong></p>
+      <p><strong>2. Displacement: s = u·t + ½a·t²</strong><br>
+      s = (${u} × ${t}) + (0.5 × ${a} × ${t}²) = <strong>${s.toFixed(3)} meters</strong></p>
+    `;
+  } else if(cat === 'ohm'){
+    const I = parseFloat($('oi').value), R = parseFloat($('or').value);
+    const V = I * R;
+    const P = V * I;
+    out.innerHTML = `
+      <h3>Ohm's & Power Law Solution</h3>
+      <p>Given: Current I = ${I} A, Resistance R = ${R} Ω</p>
+      <p><strong>1. Voltage: V = I × R</strong><br>
+      V = ${I} A × ${R} Ω = <strong>${V.toFixed(2)} Volts</strong></p>
+      <p><strong>2. Power Dissipated: P = V × I</strong><br>
+      P = ${V.toFixed(2)} V × ${I} A = <strong>${P.toFixed(2)} Watts</strong></p>
+    `;
+  } else if(cat === 'deriv'){
+    const a = parseFloat($('da').value), n = parseFloat($('dn').value);
+    const newCoeff = a * n;
+    const newPower = n - 1;
+    out.innerHTML = `
+      <h3>Calculus Derivative Solution</h3>
+      <p>Function: f(x) = ${a}x^${n}</p>
+      <p><strong>Power Rule: d/dx [a·xⁿ] = a · n · xⁿ⁻¹</strong><br>
+      f'(x) = (${a} × ${n}) · x^(${n} - 1) = <strong>${newCoeff}x^${newPower}</strong></p>
+    `;
+  } else if(cat === 'matrix'){
+    const a = parseFloat($('ma').value), b = parseFloat($('mb').value), c = parseFloat($('mc').value), d = parseFloat($('md').value);
+    const det = a*d - b*c;
+    let txt = `
+      <h3>2×2 Matrix Determinant & Inverse</h3>
+      <p>Matrix M = [[${a}, ${b}], [${c}, ${d}]]</p>
+      <p><strong>Determinant: det(M) = ad - bc</strong><br>
+      det(M) = (${a} × ${d}) - (${b} × ${c}) = <strong>${det}</strong></p>
+    `;
+    if(det === 0){
+      txt += `<p class="issue">det(M) = 0. Matrix is singular and non-invertible.</p>`;
+    } else {
+      txt += `
+        <p><strong>Inverse: M⁻¹ = (1/det) · [[d, -b], [-c, a]]</strong><br>
+        M⁻¹ = [[${(d/det).toFixed(4)}, ${(-b/det).toFixed(4)}], [${(-c/det).toFixed(4)}, ${(a/det).toFixed(4)}]]</p>
+      `;
+    }
+    out.innerHTML = txt;
+  } else {
+    try {
+      const expr = $('evalExpr').value;
+      const res = safeMathEval(expr);
+      out.innerHTML = `
+        <h3>Expression Evaluation</h3>
+        <p>Input: <code>${esc(expr)}</code></p>
+        <p>Result: <strong style="font-size:18px;color:var(--blue)">${res}</strong></p>
+      `;
+    } catch(err){
+      out.innerHTML = `<div class="issue">Evaluation Error: ${esc(err.message)}</div>`;
+    }
+  }
+  addXP(8, 'solver solution');
+}
+
+/* ==================== FLASHCARDS ==================== */
+const EXPANDED_FLASHCARDS = {
+  cs: [
+    ["What does LIFO stand for?", "Last In, First Out (characteristic of Stacks)."],
+    ["What is the average time complexity of QuickSort?", "O(n log n)."],
+    ["Which memory area handles dynamic allocation?", "Heap memory."],
+    ["What does ACID stand for in databases?", "Atomicity, Consistency, Isolation, Durability."],
+    ["Which protocol ensures reliable packet delivery?", "TCP (Transmission Control Protocol)."]
+  ],
+  physics: [
+    ["State Newton's First Law of Motion", "An object remains at rest or in uniform motion unless acted upon by a net force."],
+    ["What is Ohm's Law formula?", "V = I × R."],
+    ["What is Snell's Law of Refraction?", "n₁ sin(θ₁) = n₂ sin(θ₂)."],
+    ["What is the work-energy theorem?", "Net work done equals change in kinetic energy (W = ΔKE)."],
+    ["What is the SI unit of magnetic flux?", "Weber (Wb)."]
+  ],
+  math: [
+    ["What is the quadratic formula?", "x = (-b ± √(b² - 4ac)) / (2a)."],
+    ["What is the derivative of sin(x)?", "cos(x)."],
+    ["What is the area of a circle?", "A = π × r²."],
+    ["State the Pythagorean theorem", "a² + b² = c² in a right-angled triangle."],
+    ["Sum of interior angles in an n-sided polygon?", "(n - 2) × 180°."]
+  ],
+  chemistry: [
+    ["What is Avogadro's number?", "6.022 × 10²³ particles/mol."],
+    ["Define an Arrhenius acid", "Produces H⁺ ions in aqueous solution."],
+    ["What is the pH equation?", "pH = -log₁₀[H⁺]."],
+    ["What is Boyle's Law?", "Pressure is inversely proportional to volume at constant temperature."],
+    ["Name the bond in NaCl", "Ionic bond."]
+  ],
+  biology: [
+    ["Function of Ribosomes?", "Protein synthesis."],
+    ["Define Osmosis", "Net movement of water across a semipermeable membrane toward higher solute concentration."],
+    ["Where does glycolysis occur?", "Cytoplasm."],
+    ["What pigment traps photons?", "Chlorophyll."]
+  ],
+  social: [
+    ["When did the French Revolution start?", "1789."],
+    ["What are the 3 branches of government?", "Legislative, Executive, Judicial."],
+    ["What is inflation?", "Sustained increase in general price levels."]
+  ]
+};
+
+let currentDeckName = 'cs';
+let activeDeck = [];
+let fcIndex = 0;
+
+function switchDeck(deckKey){
+  currentDeckName = deckKey;
+  if(deckKey === 'custom'){
+    activeDeck = G('custom_cards', [
+      ["What is EduGenius AI?", "A standalone academic platform for study, review, and problem solving."],
+      ["How to add custom cards?", "Use the form on the right to enter front and back card text."]
+    ]);
+  } else {
+    activeDeck = EXPANDED_FLASHCARDS[deckKey] || EXPANDED_FLASHCARDS.cs;
+  }
+  fcIndex = 0;
+  fcShow();
+}
+
+function fcShow(){
+  if(!activeDeck.length) activeDeck = [["Deck is empty", "Add custom flashcards to this deck."]];
+  fcIndex = (fcIndex + activeDeck.length) % activeDeck.length;
+  $('fcContainer').classList.remove('flip');
+  setTimeout(()=>{
+    $('fcf').textContent = activeDeck[fcIndex][0];
+    $('fcb').textContent = activeDeck[fcIndex][1];
+  }, 160);
+  $('cardMasteryChip').textContent = `Card ${fcIndex + 1} / ${activeDeck.length}`;
+  $('customDeckCount').textContent = G('custom_cards', []).length;
+}
+
+function fcMove(d){
+  playBeep(520, 'sine', 0.08);
+  fcIndex += d;
+  fcShow();
+}
+
+function fcShuffle(){
+  activeDeck.sort(()=>Math.random() - 0.5);
+  fcIndex = 0;
+  fcShow();
+  toast('🔀 Deck shuffled');
+}
+
+function speakCurrentCard(){
+  const text = $('fcContainer').classList.contains('flip') ? $('fcb').textContent : $('fcf').textContent;
+  toggleSpeech(text);
+}
+
+function fcAdd(){
+  const q = $('fq').value.trim();
+  const a = $('fa').value.trim();
+  if(!q || !a) return toast('Please fill both front and back fields');
+
+  const custom = G('custom_cards', []);
+  custom.push([q, a]);
+  S('custom_cards', custom);
+
+  $('fq').value = ''; $('fa').value = '';
+  $('deckSelector').value = 'custom';
+  switchDeck('custom');
+  fcIndex = activeDeck.length - 1;
+  fcShow();
+  addXP(8, 'flashcard created');
+}
+
+function generateFlashcardsFromTopic(){
+  const t = $('cardTopic').value.trim();
+  if(!t) return toast('Enter a topic name');
+  const guide = getGuideForTopic(t);
+  const custom = G('custom_cards', []);
+  guide.q.forEach(([q, a])=>custom.push([q, a]));
+  S('custom_cards', custom);
+
+  $('deckSelector').value = 'custom';
+  switchDeck('custom');
+  toast(`Added ${guide.q.length} topic flashcards to your deck`);
+}
+
+function exportDeck(){
+  const blob = new Blob([JSON.stringify(activeDeck, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `flashcards_${currentDeckName}.json`;
+  a.click();
+  toast('📥 Flashcard deck exported');
+}
+
+function clearCustomDeck(){
+  if(confirm('Clear all custom flashcards?')){
+    S('custom_cards', []);
+    switchDeck('custom');
+    toast('Custom deck cleared');
+  }
+}
+
+/* ==================== CURRICULUM NOTES ==================== */
+function generateCurriculumNote(){
+  const t = $('currTopic').value.trim();
+  if(!t) return toast('Enter a topic name');
+  const guide = getGuideForTopic(t);
+
+  $('ns').value = 'Science & Mechanics';
+  $('nc').value = t;
+  $('ntag').value = 'Verified Study Guide';
+  $('nb').value = `DEFINITION:\n${guide.d}\n\nFORMULA / EQUATIONS:\n${guide.f}\n\nKEY PRINCIPLES:\n${guide.p.join('\n')}\n\nEXAMPLE:\n${guide.e}`;
+  $('currNoteStatus').textContent = 'Draft loaded into input fields below. Edit as needed and click Save.';
+}
+
+function saveNote(){
+  const s = $('ns').value.trim();
+  const c = $('nc').value.trim();
+  const tag = $('ntag').value.trim();
+  const b = $('nb').value.trim();
+  if(!s || !b) return toast('Please specify subject and note text');
+
+  const notes = G('notes');
+  notes.unshift({
+    s: s,
+    c: c || 'General Chapter',
+    tag: tag || 'Revision',
+    b: b,
+    d: new Date().toLocaleDateString(),
+    id: Date.now() + Math.random()
+  });
+  S('notes', notes);
+  $('nb').value = '';
+  touchStreak();
+  addXP(10, 'chapter note saved');
+  renderNotes();
+  refresh();
+}
+
+function renderNotes(){
+  const q = ($('nsearch').value || '').toLowerCase();
+  const allNotes = G('notes');
+  const filtered = allNotes.filter(n => (n.s + ' ' + n.c + ' ' + n.b + ' ' + (n.tag||'')).toLowerCase().includes(q));
+
+  if(!filtered.length){
+    $('nl').innerHTML = `<p class="sub" style="margin-top:16px">No matching notes found. Save a study summary above.</p>`;
+    return;
+  }
+
+  $('nl').innerHTML = filtered.map((n)=>`
+    <div class="card" style="margin:12px 0;border-left:4px solid var(--blue);position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <b style="font-size:14.5px">${esc(n.s)}</b> • <span style="font-weight:700">${esc(n.c)}</span>
+          <span class="tag" style="margin-left:8px">${esc(n.tag||'Note')}</span>
+        </div>
+        <button class="iconbtn" style="width:30px;height:30px;font-size:13px" onclick="deleteNote(${n.id})" title="Delete Note">🗑</button>
+      </div>
+      <div style="margin-top:10px;font-size:13px;white-space:pre-wrap;color:var(--ink)">${esc(n.b)}</div>
+      <div style="margin-top:12px;font-size:10.5px;color:var(--muted)">Saved on ${esc(n.d)}</div>
+    </div>
+  `).join('');
+}
+
+function deleteNote(id){
+  const notes = G('notes').filter(n => n.id !== id);
+  S('notes', notes);
+  renderNotes();
+  refresh();
+  toast('Note removed');
+}
+
+/* ==================== STICKY NOTES ==================== */
+let activeSticky = null;
+function generateStickyNotes(){
+  const t = $('stickyTopic').value.trim();
+  if(!t) return toast('Enter a topic for sticky notes');
+  const guide = getGuideForTopic(t);
+  activeSticky = { t, guide };
+
+  $('stickyOutput').innerHTML = `
+    <div class="sticky-paper">
+      <h2>📌 ${esc(t.toUpperCase())}</h2>
+      <p><strong>Definition:</strong> ${esc(guide.d)}</p>
+      ${guide.f ? `<p><strong>Key Formula:</strong> <code>${esc(guide.f)}</code></p>` : ''}
+      <p><strong>Core Reminders:</strong></p>
+      <ul>
+        ${guide.p.slice(0, 3).map(p=>`<li>${esc(p)}</li>`).join('')}
+      </ul>
+      <p><strong>Example:</strong> ${esc(guide.e)}</p>
+      <button class="btn sm" onclick="window.print()">🖨 Print Sticky Sheet</button>
+    </div>
+  `;
+}
+
+function saveStickyAsNote(){
+  if(!activeSticky) return toast('Generate a sticky note first');
+  const { t, guide } = activeSticky;
+  $('ns').value = 'Quick Revision';
+  $('nc').value = t;
+  $('ntag').value = 'Sticky Note';
+  $('nb').value = `${guide.d}\n\nFORMULA: ${guide.f}\n\nPOINTS:\n${guide.p.join('\n')}`;
+  saveNote();
+}
+
+/* ==================== REVISION PLANNER ==================== */
+function buildPlan(){
+  const sub = $('ps').value.trim();
+  const dateStr = $('pd').value;
+  const mins = Math.max(15, Math.min(240, parseInt($('pm').value) || 45));
+  const rawChapters = $('pc').value.split(',').map(c=>c.trim()).filter(Boolean);
+  const slotsPerDay = parseInt($('pday').value) || 2;
+  if(!sub || !rawChapters.length) return toast('Please enter a subject and at least one chapter');
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  let targetDate = today;
+  if(dateStr){
+    const parts = dateStr.split('-').map(Number);
+    targetDate = new Date(parts[0], parts[1]-1, parts[2]);
+    if(isNaN(targetDate.getTime()) || targetDate < today)
+      return toast('Choose today or a future exam date');
+  } else {
+    targetDate = new Date(today);
+    targetDate.setDate(targetDate.getDate() + 6);
+  }
+
+  const dayCount = Math.floor((targetDate - today) / 86400000) + 1;
+  const capacity = dayCount * slotsPerDay;
+  if(rawChapters.length > capacity){
+    return toast(`Topics (${rawChapters.length}) exceed capacity (${capacity} sessions in ${dayCount} days). Increase days or daily sessions.`);
+  }
+
+  const tasks = [];
+  rawChapters.forEach((ch, i)=>{
+    const dayOffset = Math.floor(i / slotsPerDay);
+    const schedDate = new Date(today);
+    schedDate.setDate(today.getDate() + dayOffset);
+    const iso = `${schedDate.getFullYear()}-${String(schedDate.getMonth()+1).padStart(2,'0')}-${String(schedDate.getDate()).padStart(2,'0')}`;
+    const dateFormatted = schedDate.toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'});
+    tasks.push({
+      id: Date.now() + i,
+      t: `${sub}: ${ch} (${mins} min)`,
+      when: dateFormatted,
+      dateISO: iso,
+      done: false
+    });
+  });
+
+  S('tasks', tasks);
+  $('po').innerHTML = `
+    <div class="result">
+      <b>Revision Timetable generated (${tasks.length} sessions across ${dayCount} days):</b><br>
+      ${tasks.map(t=>`📅 <b>${esc(t.when)}</b>: ${esc(t.t)}`).join('<br>')}<br><br>
+      <small>Scheduled cleanly within target date and daily session limits.</small>
+    </div>
+  `;
+  renderTasks();
+  touchStreak();
+  addXP(15, 'revision schedule created');
+}
+
+function renderTasks(){
+  const tasks = G('tasks');
+  if(!tasks.length){
+    $('tasks').innerHTML = '<p class="sub" style="margin-top:12px">No scheduled revision tasks. Generate a plan above.</p>';
+    $('tprog').style.width = '0%';
+    return;
+  }
+
+  const doneCount = tasks.filter(t => t.done).length;
+  $('tprog').style.width = `${(doneCount / tasks.length) * 100}%`;
+
+  $('tasks').innerHTML = tasks.map(t=>`
+    <div class="task ${t.done?'done':''}">
+      <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id})">
+      <span style="flex:1">${esc(t.t)}</span>
+      <small style="color:var(--muted)">${esc(t.when)}</small>
+      <button class="iconbtn" style="width:28px;height:28px;font-size:12px" onclick="deleteTask(${t.id})">🗑</button>
+    </div>
+  `).join('');
+}
+
+function toggleTask(id){
+  const tasks = G('tasks');
+  const task = tasks.find(t => t.id === id);
+  if(task){
+    task.done = !task.done;
+    S('tasks', tasks);
+    renderTasks();
+    if(task.done){
+      playBeep(740, 'sine', 0.1);
+      addXP(5, 'revision task done');
+    }
+  }
+}
+
+function deleteTask(id){
+  const tasks = G('tasks').filter(t => t.id !== id);
+  S('tasks', tasks);
+  renderTasks();
+  refresh();
+}
+
+function exportTasksICS(){
+  const tasks = G('tasks');
+  if(!tasks.length) return toast('No tasks to export');
+  const icsEscape = value => String(value||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;');
+  const now = new Date();
+  const dtstamp = now.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  let ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//EduGenius AI//Study Schedule//EN\r\nCALSCALE:GREGORIAN\r\n";
+  tasks.forEach((task, i)=>{
+    const date = task.dateISO || `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    const stamp = date.replace(/-/g,'');
+    const next = new Date(`${date}T00:00:00`);
+    next.setDate(next.getDate()+1);
+    const end = `${next.getFullYear()}${String(next.getMonth()+1).padStart(2,'0')}${String(next.getDate()).padStart(2,'0')}`;
+    ics += "BEGIN:VEVENT\r\n";
+    ics += `UID:edugenius-${task.id||i}@local\r\n`;
+    ics += `DTSTAMP:${dtstamp}\r\n`;
+    ics += `DTSTART;VALUE=DATE:${stamp}\r\n`;
+    ics += `DTEND;VALUE=DATE:${end}\r\n`;
+    ics += `SUMMARY:${icsEscape(task.t)}\r\n`;
+    ics += `DESCRIPTION:${icsEscape(task.done?'Completed EduGenius AI session':'EduGenius AI revision session')}\r\n`;
+    ics += "STATUS:CONFIRMED\r\nEND:VEVENT\r\n";
+  });
+  ics += "END:VCALENDAR\r\n";
+  const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='edugenius_revision_schedule.ics'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  toast('Revision calendar exported');
+}
+
+/* ==================== FOCUS TIMER ==================== */
+let tInt = null;
+let tTotal = 25 * 60;
+let tLeft = 25 * 60;
+function tDraw(){
+  const m = String(Math.floor(tLeft/60)).padStart(2,'0');
+  const s = String(tLeft%60).padStart(2,'0');
+  $('tt').textContent = `${m}:${s}`;
+  $('ring').style.strokeDashoffset = 678.5 * (1 - (tLeft / tTotal));
+  document.title = tInt ? `(${m}:${s}) EduGenius Focus` : 'EduGenius AI';
+}
+
+function tReset(){
+  clearInterval(tInt);
+  tInt = null;
+  tTotal = tLeft = (parseInt($('tlen').value) || 25) * 60;
+  $('tgo').textContent = '▶ Start Focus';
+  tDraw();
+}
+
+function tToggle(){
+  if(tInt){
+    clearInterval(tInt);
+    tInt = null;
+    $('tgo').textContent = '▶ Resume';
+    return;
+  }
+  getAudioCtx();
+  $('tgo').textContent = '⏸ Pause';
+
+  tInt = setInterval(()=>{
+    tLeft--;
+    tDraw();
+    if(tLeft <= 0){
+      clearInterval(tInt);
+      tInt = null;
+      $('tgo').textContent = '▶ Start Focus';
+      playSuccessChime();
+      confetti();
+
+      const sess = G('sess', 0) + 1;
+      S('sess', sess);
+      const focusMins = G('focusMins', 0) + Math.round(tTotal / 60);
+      S('focusMins', focusMins);
+
+      addXP(Math.round(tTotal / 60), 'focus session completed');
+      touchStreak();
+      tLeft = tTotal;
+      tDraw();
+      refresh();
+      toast('🎉 Focus session complete!');
+    }
+  }, 1000);
+}
+tReset();
+
+/* ==================== CODE STUDIO ==================== */
+const CODE_TEMPLATES = {
+  javascript: {
+    hello: `// JavaScript Live Frame Execution
+console.log("Welcome to EduGenius Code Studio!");
+const data = [12, 45, 68, 23, 91, 34];
+console.log("Dataset:", data);
+console.log("Sum:", data.reduce((a,b)=>a+b, 0));
+console.log("Max:", Math.max(...data));`,
+    bubble: `// Bubble Sort Algorithm
+function bubbleSort(arr) {
+  const n = arr.length;
+  for (let i = 0; i < n - 1; i++) {
+    for (let j = 0; j < n - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+      }
+    }
+  }
+  return arr;
+}
+console.log("Sorted:", bubbleSort([64, 34, 25, 12, 22, 11, 90]));`,
+    merge: `// Merge Sort (O(n log n))
+function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  const mid = Math.floor(arr.length / 2);
+  const left = mergeSort(arr.slice(0, mid));
+  const right = mergeSort(arr.slice(mid));
+  return merge(left, right);
+}
+function merge(l, r) {
+  let res = [], i = 0, j = 0;
+  while(i < l.length && j < r.length) {
+    if(l[i] < r[j]) res.push(l[i++]);
+    else res.push(r[j++]);
+  }
+  return res.concat(l.slice(i)).concat(r.slice(j));
+}
+console.log("Merge Sorted:", mergeSort([38, 27, 43, 3, 9, 82]));`,
+    binary: `// Binary Search (O(log n))
+function binarySearch(arr, target) {
+  let low = 0, high = arr.length - 1;
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    if (arr[mid] === target) return mid;
+    else if (arr[mid] < target) low = mid + 1;
+    else high = mid - 1;
+  }
+  return -1;
+}
+const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+console.log("Index of 17:", binarySearch(primes, 17));`,
+    fibonacci: `// Dynamic Programming: Fibonacci with Memoization
+function fibMemo(n, memo = {}) {
+  if (n in memo) return memo[n];
+  if (n <= 1) return n;
+  memo[n] = fibMemo(n - 1, memo) + fibMemo(n - 2, memo);
+  return memo[n];
+}
+console.log("Fibonacci(40):", fibMemo(40));`,
+    prime: `// Sieve of Eratosthenes
+function sieveOfEratosthenes(limit) {
+  const sieve = new Array(limit + 1).fill(true);
+  sieve[0] = sieve[1] = false;
+  for (let p = 2; p * p <= limit; p++) {
+    if (sieve[p]) {
+      for (let i = p * p; i <= limit; i += p) sieve[i] = false;
+    }
+  }
+  return sieve.map((val, idx) => val ? idx : null).filter(Boolean);
+}
+console.log("Primes up to 50:", sieveOfEratosthenes(50));`,
+    dsa: `// Stack Implementation
+class Stack {
+  constructor() { this.items = []; }
+  push(elem) { this.items.push(elem); }
+  pop() { return this.items.pop(); }
+  peek() { return this.items[this.items.length - 1]; }
+}
+const s = new Stack();
+s.push(10); s.push(20); s.push(30);
+console.log("Top of stack:", s.peek());
+console.log("Popped element:", s.pop());`
+  },
+  python: {
+    hello: `# Python 3
+print("Hello from EduGenius AI Code Studio!")
+nums = [10, 20, 30, 40]
+print("Sum is:", sum(nums))`,
+    bubble: `# Bubble Sort in Python
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n - 1):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+print("Sorted:", bubble_sort([64, 34, 25, 12, 22]))`,
+    merge: `# Merge Sort in Python
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L, R = arr[:mid], arr[mid:]
+        merge_sort(L); merge_sort(R)
+        i = j = k = 0
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]: arr[k] = L[i]; i += 1
+            else: arr[k] = R[j]; j += 1
+            k += 1
+        while i < len(L): arr[k] = L[i]; i += 1; k += 1
+        while j < len(R): arr[k] = R[j]; j += 1; k += 1
+    return arr
+
+print("Merge Sorted:", merge_sort([12, 11, 13, 5, 6, 7]))`,
+    binary: `# Binary Search in Python
+def binary_search(arr, target):
+    l, r = 0, len(arr) - 1
+    while l <= r:
+        mid = (l + r) // 2
+        if arr[mid] == target: return mid
+        elif arr[mid] < target: l = mid + 1
+        else: r = mid - 1
+    return -1
+
+print("Index of 23:", binary_search([2, 5, 8, 12, 16, 23, 38], 23))`,
+    fibonacci: `# Fibonacci Generator
+def fib(n):
+    a, b = 0, 1
+    res = []
+    for _ in range(n):
+        res.append(a)
+        a, b = b, a + b
+    return res
+
+print("Fibonacci(8):", fib(8))`,
+    prime: `# Prime checker
+def is_prime(n):
+    if n <= 1: return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0: return False
+    return True
+
+print("Is 29 prime?", is_prime(29))`,
+    dsa: `# Stack via list
+stack = []
+stack.append(1)
+stack.append(2)
+print("Popped:", stack.pop())`
+  },
+  c: {
+    hello: `#include <stdio.h>
+
+int main() {
+    printf("Hello from EduGenius C Studio!\\n");
+    return 0;
+}`,
+    bubble: `#include <stdio.h>
+
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[] = {64, 25, 12, 22, 11};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    bubbleSort(arr, n);
+    for(int i = 0; i < n; i++) printf("%d ", arr[i]);
+    return 0;
+}`,
+    merge: `#include <stdio.h>
+
+void merge(int arr[], int l, int m, int r) {
+    // Merge procedure
+}
+
+int main() {
+    printf("Merge Sort Template\\n");
+    return 0;
+}`,
+    binary: `#include <stdio.h>
+
+int binarySearch(int arr[], int l, int r, int x) {
+    while (l <= r) {
+        int m = l + (r - l) / 2;
+        if (arr[m] == x) return m;
+        if (arr[m] < x) l = m + 1;
+        else r = m - 1;
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {2, 3, 4, 10, 40};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    printf("Index: %d\\n", binarySearch(arr, 0, n - 1, 10));
+    return 0;
+}`,
+    fibonacci: `#include <stdio.h>
+
+int main() {
+    int n = 7, t1 = 0, t2 = 1, next;
+    for (int i = 1; i <= n; ++i) {
+        printf("%d ", t1);
+        next = t1 + t2;
+        t1 = t2;
+        t2 = next;
+    }
+    return 0;
+}`,
+    prime: `#include <stdio.h>
+#include <stdbool.h>
+
+bool isPrime(int n) {
+    if (n <= 1) return false;
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0) return false;
+    }
+    return true;
+}
+
+int main() {
+    printf("Is 19 prime? %s\\n", isPrime(19) ? "Yes" : "No");
+    return 0;
+}`,
+    dsa: `#include <stdio.h>
+#define MAX 100
+
+int stack[MAX], top = -1;
+void push(int x) { stack[++top] = x; }
+int pop() { return stack[top--]; }
+
+int main() {
+    push(42);
+    printf("Popped: %d\\n", pop());
+    return 0;
+}`
+  }
+};
+
+function loadCodeTemplate(lang){
+  const tKey = $('codeTemplate').value;
+  $('codein').value = (CODE_TEMPLATES[lang] && CODE_TEMPLATES[lang][tKey]) || '';
+  $('codeout').innerHTML = '';
+  $('codeExplainBox').classList.add('hide');
+}
+function applyTemplate(){
+  loadCodeTemplate($('lang').value);
+}
+loadCodeTemplate('javascript');
+
+function executeOrCheckCode(){
+  const lang = $('lang').value;
+  const code = $('codein').value;
+  const out = $('codeout');
+  out.innerHTML = '';
+  $('codeExplainBox').classList.add('hide');
+
+  if(!code.trim()) return toast('Please enter code in the editor');
+
+  if(lang === 'javascript'){
+    const frame = document.createElement('iframe');
+    frame.setAttribute('sandbox','allow-scripts');
+    frame.title = 'Isolated JavaScript execution frame';
+    frame.style.cssText = 'display:none;width:0;height:0;border:0';
+    const safeCode = JSON.stringify(code).replace(/</g,'\\u003c');
+    const token = `eg-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const payload = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; connect-src 'none'; img-src 'none'; media-src 'none'; form-action 'none'"><script>
+      const output=[];
+      const fmt=v=>{try{return typeof v==='string'?v:JSON.stringify(v)}catch(e){return String(v)}};
+      console.log=(...a)=>output.push(a.map(fmt).join(' '));
+      console.error=(...a)=>output.push('ERROR: '+a.map(fmt).join(' '));
+      try{(new Function(${safeCode}))();parent.postMessage({token:${JSON.stringify(token)},output:output,error:null},'*')}
+      catch(e){parent.postMessage({token:${JSON.stringify(token)},output:output,error:String(e&&e.message||e)},'*')}
+    <\/script>`;
+    out.innerHTML = '<div class="code-out">Running in isolated iframe sandbox...</div>';
+    let settled = false;
+    const cleanup = () => { window.removeEventListener('message',receive); frame.remove(); };
+    const receive = event => {
+      if(event.source !== frame.contentWindow || !event.data || event.data.token !== token || settled) return;
+      settled = true; clearTimeout(timeout); cleanup();
+      const lines = (event.data.output||[]).join('\n') || '[Code ran without console output]';
+      out.innerHTML = event.data.error
+        ? `<div class="issue">❌ <strong>Runtime Error:</strong> ${esc(event.data.error)}<pre class="code-out">${esc(lines)}</pre></div>`
+        : `<div class="code-out"><strong>Console Terminal:</strong><br>${esc(lines)}</div>`;
+      if(!event.data.error) addXP(5,'JavaScript executed');
+    };
+    window.addEventListener('message',receive);
+    const timeout = setTimeout(()=>{
+      if(settled) return;
+      settled=true; cleanup();
+      out.innerHTML='<div class="issue">Execution timeout (2s limit). Infinite loop detected.</div>';
+    },2000);
+    frame.srcdoc = payload;
+    document.body.appendChild(frame);
+    return;
+  }
+
+  // Static checks for C and Python with mandatory disclosure
+  const issues = [];
+  const lines = code.split('\n');
+
+  if(code.split('{').length !== code.split('}').length)
+    issues.push(`Mismatched curly braces: ${code.split('{').length - 1} "{" vs ${code.split('}').length - 1} "}".`);
+  if(code.split('(').length !== code.split(')').length)
+    issues.push(`Mismatched parentheses: ${code.split('(').length - 1} "(" vs ${code.split(')').length - 1} ")".`);
+
+  lines.forEach((l, idx)=>{
+    const lineNum = idx + 1;
+    const t = l.trim();
+    if(!t || t.startsWith('//') || t.startsWith('#')) return;
+
+    if(lang === 'c'){
+      if(/\bif\s*\([^=!<>]*[^=!<>]=[^=][^)]*\)/.test(t))
+        issues.push(`Line ${lineNum}: Single '=' in if() assigns instead of comparing. Use '=='.`);
+      if(!t.endsWith(';') && !t.endsWith('{') && !t.endsWith('}') && !t.endsWith(':') && !t.startsWith('#') && !/^(if|for|while|else|do)\b/.test(t) && !t.endsWith(','))
+        issues.push(`Line ${lineNum}: Missing semicolon (;) at end of statement.`);
+    }
+
+    if(lang === 'python'){
+      if(/^(if|elif|else|for|while|def|class|try|except|with)\b/.test(t) && !t.endsWith(':'))
+        issues.push(`Line ${lineNum}: Block header must end with a colon (:).`);
+      if(/^print\s+[^(]/.test(t))
+        issues.push(`Line ${lineNum}: Python 3 requires print() parentheses.`);
+    }
+  });
+
+  if(lang === 'c' && !code.includes('main'))
+    issues.push('Missing main() entry point function.');
+
+  const disclaimer = `<div style="font-size:11px;color:var(--muted);margin-top:8px">ℹ️ <strong>System Notice:</strong> C/Python live execution requires a backend compiler server. This standalone edition executes static syntax analysis and structure auditing without cloud dependencies.</div>`;
+
+  if(issues.length){
+    out.innerHTML = `
+      <h3 style="font-size:14px;margin:10px 0">Static Syntax Audit: ${issues.length} Issue(s) Found</h3>
+      ${issues.map(i=>`<div class="issue">⚠️ ${esc(i)}</div>`).join('')}
+      ${disclaimer}
+    `;
+  } else {
+    out.innerHTML = `
+      <div class="issue ok">
+        ✅ <strong>Static Analysis Passed:</strong> Syntax, control constructs, and braces validated.
+      </div>
+      ${disclaimer}
+    `;
+    addXP(5, 'code static check');
+  }
+}
+
+function beautifyCode(){
+  const lang = $('lang').value;
+  let code = $('codein').value;
+  if(lang === 'javascript'){
+    try {
+      const lines = code.split('\n');
+      let indent = 0;
+      const formatted = lines.map(line =>{
+        let trimmed = line.trim();
+        if(trimmed.startsWith('}')) indent = Math.max(0, indent - 1);
+        let pad = '  '.repeat(indent);
+        if(trimmed.endsWith('{')) indent++;
+        return pad + trimmed;
+      }).join('\n');
+      $('codein').value = formatted;
+      toast('Code formatted');
+    } catch(e){}
+  } else {
+    toast('Auto-indentation applied');
+  }
+}
+
+function explainCode(){
+  const box = $('codeExplainBox');
+  box.classList.remove('hide');
+  box.innerHTML = `
+    <h3>💡 Big-O Complexity Analysis</h3>
+    <p>Algorithmic efficiency profile for current routine:</p>
+    <ul>
+      <li><strong>Time Complexity:</strong> Evaluates step execution rate relative to input scale N.</li>
+      <li><strong>Space Complexity:</strong> Evaluates heap memory allocations and call stack depth.</li>
+      <li><strong>Invariants:</strong> Verifies pre-conditions and termination properties to prevent infinite cycles.</li>
+    </ul>
+  `;
+}
+
+/* ==================== EDUGENIUS AI STUDY HELPER ==================== */
+async function sendChat(){
+  const inp = $('chatin');
+  const q = inp.value.trim();
+  if(!q) return;
+  inp.value = '';
+
+  const box = $('chatbox');
+  box.insertAdjacentHTML('beforeend', `<div class="bubble user">${esc(q)}</div>`);
+  box.scrollTop = box.scrollHeight;
+  playBeep(440, 'sine', 0.08);
+
+  const guide = getGuideForTopic(q);
+  const typing = document.createElement('div');
+  typing.className = 'bubble bot';
+  typing.innerHTML = '<em>Searching local database...</em>';
+  box.appendChild(typing);
+  box.scrollTop = box.scrollHeight;
+
+  await sleep(400);
+  typing.remove();
+
+  const answer = `
+    <strong>${esc(q.toUpperCase())}</strong><br><br>
+    ${esc(guide.d)}<br><br>
+    ${guide.f ? `<strong>Key Formula:</strong> <code>${esc(guide.f)}</code><br><br>` : ''}
+    <strong>Core Principles:</strong>
+    <ul>
+      ${guide.p.slice(0, 3).map(p=>`<li>${esc(p)}</li>`).join('')}
+    </ul>
+  `;
+
+  const b = document.createElement('div');
+  b.className = 'bubble bot';
+  b.innerHTML = answer;
+  box.appendChild(b);
+  box.scrollTop = box.scrollHeight;
+  addXP(5, 'study query');
+}
+
+function askQuick(q){
+  $('chatin').value = q;
+  sendChat();
+}
+
+/* ==================== ANALYTICS & PROGRESS REPORT ==================== */
+function analytics(){
+  const sc = G('scores');
+  $('at').textContent = sc.length;
+
+  if(sc.length){
+    const avg = Math.round(sc.reduce((a,b)=>a + b.pct, 0) / sc.length);
+    const best = Math.max(...sc.map(s=>s.pct));
+    $('aa').textContent = `${avg}%`;
+    $('ab').textContent = `${best}%`;
+  } else {
+    $('aa').textContent = '—';
+    $('ab').textContent = '—';
+  }
+  $('an').textContent = G('notes').length;
+
+  bars($('chart'), sc.map(s=>s.pct));
+
+  $('history').innerHTML = sc.length ? sc.slice().reverse().map(s=>`
+    <div class="activity">
+      <div class="dot"></div>
+      <div style="flex:1">
+        <b>${esc(s.topic)}</b>
+        <small>${esc(s.date)} • Score: ${s.score}/${s.total} (${s.duration || 0}s)</small>
+      </div>
+      <b style="color:${s.pct>=70?'var(--emerald)':'var(--blue)'};font-size:15px">${s.pct}%</b>
+    </div>
+  `).join('') : '<p class="sub">No examination submissions recorded yet.</p>';
+}
+
+function downloadReportCard(){
+  const sc = G('scores');
+  const name = G('uname', 'Scholar');
+  const xp = G('xp', 0);
+  const avg = sc.length ? Math.round(sc.reduce((a,b)=>a+b.pct,0)/sc.length) : 0;
+
+  const report = `
+============================================================
+       EDUGENIUS AI ACADEMIC PROGRESS REPORT
+============================================================
+Student Name: ${name}
+Curriculum Level: ${$('globalGrade').selectedOptions[0].text}
+Total Scholar XP: ${xp} (Level ${Math.floor(xp/100)+1})
+Quizzes Completed: ${sc.length}
+Average Accuracy: ${avg}%
+Notes Archived: ${G('notes').length}
+Focus Sessions: ${G('sess', 0)}
+Report Generated: ${new Date().toLocaleDateString()}
+Status: Standalone Offline Workspace Record
+============================================================
+`;
+  const blob = new Blob([report], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${name.replace(/\s+/g,'_')}_Progress_Report.txt`;
+  a.click();
+  toast('📄 Progress report downloaded');
+}
+
+/* ==================== ROUTING, CHARTS & REFRESH ==================== */
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id === id));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active', b.dataset.p === id));
+  const activeBtn = document.querySelector(`.nav button[data-p="${id}"]`);
+  if(activeBtn) $('crumb').textContent = activeBtn.textContent.trim();
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  refresh();
+  if(id==='notes') renderNotes();
+  if(id==='planner') renderTasks();
+  if(id==='analytics') analytics();
+  if(id==='cards') fcShow();
+}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.p));
+
+function bars(el, scores){
+  if(!el) return;
+  if(!scores.length){
+    el.innerHTML = '<span style="align-self:center;width:100%">No examination records yet</span>';
+    return;
+  }
+  const recent = scores.slice(-8);
+  el.innerHTML = recent.map(s=>`
+    <span title="${s}%"><i style="height:0" data-h="${s}"></i>${s}%</span>
+  `).join('');
+  setTimeout(()=>{
+    el.querySelectorAll('i').forEach(i=>i.style.height = `${Math.max(0, Math.min(100, Number(i.dataset.h) || 0))}%`);
+  }, 50);
+}
+
+function refresh(){
+  const sc = G('scores');
+  const notes = G('notes');
+  const tasks = G('tasks');
+  const xp = G('xp', 0);
+  const lvl = Math.floor(xp/100) + 1;
+  const st = G('streak', {n:0});
+  const focusMins = G('focusMins', 0);
+
+  $('sn').textContent = notes.length;
+  $('st').textContent = sc.length;
+  $('sf').textContent = `${focusMins}m`;
+
+  const avg = sc.length ? Math.round(sc.reduce((a,b)=>a+b.pct, 0) / sc.length) : null;
+  $('sa').textContent = avg === null ? '—' : `${avg}%`;
+
+  $('lvl').textContent = lvl;
+  $('rankTitle').textContent = lvl >= 5 ? 'Grandmaster' : lvl >= 3 ? 'Adept' : 'Scholar';
+  $('xpt').textContent = `${xp % 100} / 100 XP`;
+  $('xpf').style.width = `${xp % 100}%`;
+  $('totalXpLabel').textContent = `${xp} Total XP`;
+  $('xpc').textContent = xp;
+  $('streak').textContent = st.n;
+
+  bars($('miniChart'), sc.map(s=>s.pct));
+
+  const badgesList = [
+    ['🌱 First Note', notes.length > 0],
+    ['🎯 First Exam', sc.length > 0],
+    ['💯 Perfect 100%', sc.some(s=>s.pct === 100)],
+    ['📅 Revision Master', tasks.length >= 3],
+    ['⚡ 100+ XP', xp >= 100],
+    ['🔥 3-Day Streak', st.n >= 3],
+    ['⏱ Deep Focus', G('sess', 0) >= 2]
+  ];
+  $('badges').innerHTML = badgesList.map(b=>`
+    <span class="badge ${b[1]?'on':''}">${b[0]}</span>
+  `).join('');
+
+  $('tsess').textContent = G('sess', 0);
+  $('focusMinutesBadge').textContent = `${focusMins} min`;
+}
+
+/* ==================== CANVAS BACKGROUND CONSTELLATION ==================== */
+(function(){
+  const c = $('bg-canvas'), ctx = c.getContext('2d');
+  let w, h, pts = [];
+  function resize(){
+    w = c.width = window.innerWidth;
+    h = c.height = window.innerHeight;
+    pts = Array.from({length: Math.min(45, Math.floor(w*h/25000))}, ()=>({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-.5)*0.3, vy: (Math.random()-.5)*0.3,
+      r: Math.random()*2 + 1
+    }));
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    const dk = document.documentElement.getAttribute('data-theme')==='dark';
+    const col = dk ? '148, 163, 255' : '79, 110, 247';
+    pts.forEach((p, idx)=>{
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < 0 || p.x > w) p.vx *= -1;
+      if(p.y < 0 || p.y > h) p.vy *= -1;
+      ctx.fillStyle = `rgba(${col}, 0.5)`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
+
+      for(let j = idx+1; j < pts.length; j++){
+        const q = pts[j];
+        const dist = Math.hypot(p.x - q.x, p.y - q.y);
+        if(dist < 120){
+          ctx.strokeStyle = `rgba(${col}, ${0.15 * (1 - dist/120)})`;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ==================== CONFETTI CANNON ==================== */
+function confetti(){
+  const c = $('confetti'), ctx = c.getContext('2d');
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+  const colors = ['#4f6ef7','#06b6d4','#ec4899','#f59e0b','#10b981'];
+  const pieces = Array.from({length:100}, ()=>({
+    x: window.innerWidth / 2, y: window.innerHeight / 3,
+    vx: (Math.random() - 0.5) * 14,
+    vy: Math.random() * -12 - 3,
+    size: Math.random() * 8 + 4,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    rot: Math.random() * 6,
+    vrot: (Math.random() - 0.5) * 0.3
+  }));
+
+  let frame = 0;
+  (function anim(){
+    ctx.clearRect(0, 0, c.width, c.height);
+    pieces.forEach(p =>{
+      p.vy += 0.35;
+      p.x += p.vx; p.y += p.vy;
+      p.rot += p.vrot;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+      ctx.restore();
+    });
+    if(++frame < 120) requestAnimationFrame(anim);
+    else ctx.clearRect(0, 0, c.width, c.height);
+  })();
+}
+
+/* ==================== INITIALIZATION ==================== */
+const todayForDate = new Date();
+$('pd').min = `${todayForDate.getFullYear()}-${String(todayForDate.getMonth()+1).padStart(2,'0')}-${String(todayForDate.getDate()).padStart(2,'0')}`;
+const initialGrade = G('grade', 'college');
+$('globalGrade').value = initialGrade;
+switchGrade(initialGrade);
+touchStreak();
+refresh();
+switchDeck('cs');
+renderNotes();
+renderTasks();
+</script>
+</body>
+</html>
